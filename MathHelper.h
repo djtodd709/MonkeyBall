@@ -4,6 +4,37 @@
 #include <stdio.h>
 #include <math.h>
 
+struct v2
+{
+	float x;
+	float y;
+	
+	inline v2 operator+ (v2 o)
+	{
+		this->x = this->x + o.x;
+		this->y = this->y + o.y;
+		return *this;
+	}
+	inline v2 operator- (v2 o)
+	{
+		this->x = this->x - o.x;
+		this->y = this->y - o.y;
+		return *this;
+	}
+	inline v2 operator* (float m)
+	{
+		this->x = this->x * m;
+		this->y = this->y * m;
+		return *this;
+	}
+	inline v2 operator/ (float m)
+	{
+		this->x = this->x / m;
+		this->y = this->y / m;
+		return *this;
+	}
+};
+
 struct v3
 {
 	float x;
@@ -40,20 +71,7 @@ struct v3
 	}
 };
 
-float magnitude(v3 vector)
-{
-	float ret = vector.x*vector.x + vector.y*vector.y + vector.z*vector.z;
-	return sqrt(ret);
-}
-
-v3 reflectVector (v3 incoming, v3 surfaceNormal)
-{
-	v3 ret;
-	ret.x = surfaceNormal.x;
-	ret.y = surfaceNormal.y;
-	ret.z = surfaceNormal.z;
-	ret = ret * magnitude(incoming);
-	return ret;
-}
+float magnitude(v3 vector);
+v3 reflectVector (v3 incoming, v3 surfaceNormal);
 
 #endif

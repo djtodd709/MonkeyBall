@@ -26,9 +26,9 @@ Mesh::Mesh(){}
 bool Mesh::importObj(const char * path)
 {
   std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
-  std::vector< Vec3* > temp_vertices;
-  std::vector< Vec2* > temp_uvs;
-  std::vector< Vec3* > temp_normals;
+  std::vector< v3* > temp_vertices;
+  std::vector< v2* > temp_uvs;
+  std::vector< v3* > temp_normals;
 
   FILE * file = fopen(path, "r");
   if( file == NULL ){
@@ -45,17 +45,17 @@ bool Mesh::importObj(const char * path)
 
     // else : parse lineHeader
     if ( strcmp( lineHeader, "v" ) == 0 ){
-      Vec3* vertex = new Vec3();
+      v3* vertex = new v3;
       fscanf(file, "%f %f %f\n", &vertex->x, &vertex->y, &vertex->z );
       temp_vertices.push_back(vertex);
     }
     else if ( strcmp( lineHeader, "vt" ) == 0 ){
-      Vec2* uv = new Vec2();
+      v2* uv = new v2;
       fscanf(file, "%f %f\n", &uv->x, &uv->y );
       temp_uvs.push_back(uv);
     }
     else if ( strcmp( lineHeader, "vn" ) == 0 ){
-      Vec3* normal = new Vec3();
+      v3* normal = new v3;
       fscanf(file, "%f %f %f\n", &normal->x, &normal->y, &normal->z );
       temp_normals.push_back(normal);
     }
@@ -83,19 +83,19 @@ bool Mesh::importObj(const char * path)
   // For each vertex of each triangle
   for( unsigned int i=0; i<vertexIndices.size(); i++ ){
     unsigned int vertexIndex = vertexIndices[i];
-    Vec3 vertex = *temp_vertices[ vertexIndex-1 ];
+    v3* vertex = temp_vertices[ vertexIndex-1 ];
     out_vertices.push_back(vertex);
   }
   //For each uv of each triangle
   for( unsigned int i=0; i<uvIndices.size(); i++ ){
     unsigned int uvIndex = uvIndices[i];
-    Vec2 uv = *temp_uvs[ uvIndex-1 ];
+    v2* uv = temp_uvs[ uvIndex-1 ];
     out_uvs.push_back(uv);
   }
   //For each normal of each triangle
   for( unsigned int i=0; i<normalIndices.size(); i++ ){
     unsigned int normalIndex = normalIndices[i];
-    Vec3 normal = *temp_normals[ normalIndex-1 ];
+    v3* normal = temp_normals[ normalIndex-1 ];
     out_normals.push_back(normal);
   }
   return true;
@@ -105,7 +105,7 @@ bool Mesh::importObj(const char * path)
 void Mesh::drawMesh(){
   glBegin(GL_TRIANGLES);
   for( unsigned int i=0; i<out_vertices.size(); i++ ){
-    glVertex3f(out_vertices[i].x,out_vertices[i].y,out_vertices[i].z);
+    glVertex3f(out_vertices[i]->x,out_vertices[i]->y,out_vertices[i]->z);
   }
   glEnd();
 }

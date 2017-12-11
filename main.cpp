@@ -14,7 +14,6 @@
 #endif
 
 #include "Mesh.h"
-#include "MathHelper.h"
 Mesh *aiaiHead;
 
 #define X 0
