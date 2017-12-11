@@ -15,7 +15,7 @@
 
 #include "Mesh.h"
 #include "MathHelper.h"
-Mesh *myMesh;
+Mesh *aiaiHead;
 
 #define X 0
 #define Y 1
@@ -34,22 +34,22 @@ float m_spe[4] = {0.1f,0.1f,0.1f,1};
 float shiny = 10;
 
 //position of camera and target. camPos is scaled to the size of the terrain
-float camPos[] = {0, 5.0f, 5.0f};	//where the camera is
+float camPos[] = {5.0f, 5.0f, 5.0f};	//where the camera is
 float camTarget[] = {0,0,0};
 
 //initial settings for main window. Called (almost) at the begining of the program.
 void init(void){
-	glClearColor(1, 1, 1, 0);	//black background
+	glClearColor(0, 0, 0, 0);	//black background
 	glColor3f(1, 1, 1);
 
 	glMatrixMode(GL_PROJECTION);
 
 	//Enable lights and depth testing
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+	//glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHT0);
 
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 
 	//Implement backface culling
 	glEnable(GL_CULL_FACE);
@@ -72,8 +72,8 @@ void init(void){
 	glLoadIdentity();
 	gluPerspective(45, 1, 1, 1000);
 
-	//aiaiHead = new Mesh();
-	//aiaiHead->importObj();
+	aiaiHead = new Mesh();
+	aiaiHead->importObj("Assets/Models/Monkey.obj");
 
 }
 
@@ -88,7 +88,8 @@ void display(void){
 	gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
 
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
-		//aiaiHead->drawMesh();
+		//glutSolidCube(1);
+		aiaiHead->drawMesh();
 	glPopMatrix();
 	//swap buffers
 	glutSwapBuffers();
@@ -109,7 +110,7 @@ void keyboard(unsigned char key, int xIn, int yIn){
 void reshape(int w, int h){
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	//gluPerspective(45, (float)((w+0.0f)/h), 1, 1000);	//adjust perspective to keep terrain in view
+	gluPerspective(45, (float)((w+0.0f)/h), 1, 1000);	//adjust perspective to keep terrain in view
 	glMatrixMode(GL_MODELVIEW);
 	glViewport(0, 0, w, h);			//adjust viewport to new height and width
 }
