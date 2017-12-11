@@ -1,6 +1,9 @@
 #ifndef __MESH_H__
 #define __MESH_H__
 
+#include <vector>
+#include "Vec.h"
+
 class Mesh{
 public:
   Mesh();
@@ -9,9 +12,9 @@ public:
   void drawMesh();
 
 private:
-  std::vector < glm::vec3 > out_vertices;
-  std::vector < glm::vec2 > out_uvs;
-  std::vector < glm::vec3 > out_normals;
+  std::vector < Vec3 > out_vertices;
+  std::vector < Vec2 > out_uvs;
+  std::vector < Vec3 > out_normals;
 };
 
 #endif

@@ -71,8 +71,8 @@ void init(void){
 	glLoadIdentity();
 	gluPerspective(45, 1, 1, 1000);
 
-	aiaiHead = new Mesh();
-	aiaiHead->importObj();
+	//aiaiHead = new Mesh();
+	//aiaiHead->importObj();
 
 }
 
@@ -87,7 +87,7 @@ void display(void){
 	gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
 
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
-		aiaiHead->drawMesh();
+		//aiaiHead->drawMesh();
 	glPopMatrix();
 	//swap buffers
 	glutSwapBuffers();
