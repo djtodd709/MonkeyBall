@@ -8,7 +8,7 @@ class Mesh{
 public:
   Mesh();
 
-  bool importObj(const char * path);
+  bool importObj(const char * path, bool textured);
   void drawMesh();
 
 private:

@@ -73,7 +73,7 @@ void init(void){
 	gluPerspective(45, 1, 1, 1000);
 
 	aiaiHead = new Mesh();
-	aiaiHead->importObj("Assets/Models/Monkey.obj");
+	aiaiHead->importObj("Assets/Models/Monkey.obj",false);
 
 }
 

@@ -9,7 +9,6 @@
 #endif
 
 #include "Mesh.h"
-#include "Vec.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -23,7 +22,7 @@ Mesh::Mesh(){}
 /*obj for blender - turn every selection off to wirte file in simplest form - tick selection only*/
 
 //WRITE OBJ IMPORTER
-bool Mesh::importObj(const char * path)
+bool Mesh::importObj(const char * path, bool textured)
 {
   std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
   std::vector< Vec3* > temp_vertices;
@@ -62,19 +61,26 @@ bool Mesh::importObj(const char * path)
     else if ( strcmp( lineHeader, "f" ) == 0 ){
       std::string vertex1, vertex2, vertex3;
       unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-      //int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2] );
-      int matches = fscanf(file, "%d//%d %d//%d %d//%d\n", &vertexIndex[0], &normalIndex[0], &vertexIndex[1], &normalIndex[1], &vertexIndex[2], &normalIndex[2] );
-      //if (matches != 9){
-      if (matches != 6){
-        printf("File too complex!\n");
-        return false;
+      if(textured){
+        int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2] );
+        if (matches != 9){
+          printf("File too complex!\n");
+          return false;
+        }
+        uvIndices    .push_back(uvIndex[0]);
+        uvIndices    .push_back(uvIndex[1]);
+        uvIndices    .push_back(uvIndex[2]);
+      }
+      else{
+        int matches = fscanf(file, "%d//%d %d//%d %d//%d\n", &vertexIndex[0], &normalIndex[0], &vertexIndex[1], &normalIndex[1], &vertexIndex[2], &normalIndex[2] );
+        if (matches != 6){
+          printf("File too complex!\n");
+          return false;
+        }
       }
       vertexIndices.push_back(vertexIndex[0]);
       vertexIndices.push_back(vertexIndex[1]);
       vertexIndices.push_back(vertexIndex[2]);
-      //uvIndices    .push_back(uvIndex[0]);
-      //uvIndices    .push_back(uvIndex[1]);
-      //uvIndices    .push_back(uvIndex[2]);
       normalIndices.push_back(normalIndex[0]);
       normalIndices.push_back(normalIndex[1]);
       normalIndices.push_back(normalIndex[2]);
