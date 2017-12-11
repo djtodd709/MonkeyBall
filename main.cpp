@@ -14,6 +14,7 @@
 #endif
 
 #include "Mesh.h"
+#include "MathHelper.h"
 Mesh *myMesh;
 
 #define X 0
