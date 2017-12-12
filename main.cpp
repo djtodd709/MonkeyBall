@@ -13,6 +13,8 @@
 #  include <GL/freeglut.h>
 #endif
 
+#include "Camera.h"
+
 #include "Mesh.h"
 Mesh *aiaiHead;
 Mesh *aiaiBody;
@@ -37,6 +39,17 @@ float shiny = 10;
 //position of camera and target. camPos is scaled to the size of the terrain
 float camPos[] = {10.0f, 2.0f, 10.0f};	//where the camera is
 float camTarget[] = {0,2.0f,0};
+
+//Orbit cam vars
+float camDist = -5;
+float camTwist = 0;
+float camElev = 0;
+float camAzimuth = 0;
+float camX = 0;
+float camZ = 0;
+//Temp ground
+float groundSize = 10;
+float groundHeight = -2;
 
 float angle = 0.0f;
 
@@ -92,9 +105,23 @@ void display(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
+	//gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
+        gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
+	
+	orbitView(camDist, camTwist, camElev, camAzimuth);
 
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
+		glPushMatrix(); //Draw temp ground plane
+			glTranslatef(0,groundHeight,0); //Move the ground plane down from the origin a bit
+			glBegin(GL_QUADS);
+				glNormal3f(0,1,0);
+				glVertex3i(groundSize,0,groundSize);
+				glVertex3i(groundSize,0,-groundSize);
+				glVertex3i(-groundSize,0,-groundSize);
+				glVertex3i(-groundSize,0,groundSize);
+			glEnd();
+		glPopMatrix();
+		
 		glRotatef(angle, 0,0.6f,0.8f);
 		//glutSolidCube(1);
 		aiaiHead->drawMesh();
@@ -124,6 +151,31 @@ void keyboard(unsigned char key, int xIn, int yIn){
 		case 'q':	//quit
 		case 27:	//27 is the esc key
 			exit(0);
+			break;
+                //Camera zoom
+                case '.':
+			camDist += 1;
+			break;
+                case ',':
+			camDist -= 1;
+			break;
+	}
+}
+
+void special(int key, int xIn, int yIn)
+{
+	switch (key) {
+		case GLUT_KEY_DOWN:
+			camElev += 1;
+			break;
+		case GLUT_KEY_UP:
+			camElev -= 1;
+			break;
+		case GLUT_KEY_LEFT:
+			camAzimuth += 1;
+			break;
+		case GLUT_KEY_RIGHT:
+			camAzimuth -= 1;
 			break;
 	}
 }
@@ -157,6 +209,7 @@ int main(int argc, char** argv)
 
 	glutDisplayFunc(display);					//registers "display" as the display callback function
 	glutKeyboardFunc(keyboard);				//registers "keyboard" as the keyboard callback function
+	glutSpecialFunc(special);
 	glutTimerFunc(17, FPSTimer, 0);		//registers "FPSTimer" as the timer callback function
 	glutReshapeFunc(reshape);					//registers "reshape" as the reshape callback function
 
