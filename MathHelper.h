@@ -8,7 +8,7 @@ struct v2
 {
 	float x;
 	float y;
-	
+
 	inline v2 operator+ (v2 o)
 	{
 		this->x = this->x + o.x;
@@ -40,7 +40,7 @@ struct v3
 	float x;
 	float y;
 	float z;
-	
+
 	inline v3 operator+ (v3 o)
 	{
 		this->x = this->x + o.x;

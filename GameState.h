@@ -17,8 +17,8 @@ enum CurrentState
 class GameState{
 public:
 	GameState();
-	tick(float dt);
-	setState(CurrentState newState);
+	void tick(float dt);
+	void setState(CurrentState newState);
 private:
 vector <Entity> gameObjects;
 //TODO: Create a UIelement class: Should check against mouse input to see if we're hovering over the screen-space co-ords it occupies, and  execute logic on click
