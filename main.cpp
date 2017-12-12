@@ -13,28 +13,32 @@
 #  include <GL/freeglut.h>
 #endif
 
-#include "GameState.h"
+#include "Mesh.h"
 Mesh *aiaiHead;
+Mesh *aiaiBody;
+Mesh *aiaiArm;
 
 #define X 0
 #define Y 1
 #define Z 2
 
 //Light 0 properties
-float l0pos[4] = {10.0f,15.0f,10.0f,1};
+float l0pos[4] = {1.0f,10.0f,1.0f,1};
 float l0dif[4] = {0.7f,0.7f,0.7f,1};
 float l0amb[4] = {0.1f,0.1f,0.1f,1};
 float l0spe[4] = {1,1,1,1};
 
-//Material properties - kinda grassy
-float m_dif[4] = {0.6f,0.9f,0.4f,1};
-float m_amb[4] = {0,0.1f,0,1};
-float m_spe[4] = {0.1f,0.1f,0.1f,1};
+//Material properties
+float m_dif[4] = {1.0f,1.0f,1.0f,1};
+float m_amb[4] = {0.5f,0.5f,0.5f,1};
+float m_spe[4] = {1.0f,1.0f,1.0f,1};
 float shiny = 10;
 
 //position of camera and target. camPos is scaled to the size of the terrain
-float camPos[] = {5.0f, 5.0f, 5.0f};	//where the camera is
-float camTarget[] = {0,0,0};
+float camPos[] = {10.0f, 2.0f, 10.0f};	//where the camera is
+float camTarget[] = {0,2.0f,0};
+
+float angle = 0.0f;
 
 //initial settings for main window. Called (almost) at the begining of the program.
 void init(void){
@@ -45,10 +49,10 @@ void init(void){
 
 	//Enable lights and depth testing
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 
-	//glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 
 	//Implement backface culling
 	glEnable(GL_CULL_FACE);
@@ -72,13 +76,18 @@ void init(void){
 	gluPerspective(45, 1, 1, 1000);
 
 	aiaiHead = new Mesh();
-	aiaiHead->importObj("Assets/Models/Monkey.obj",false);
+	aiaiHead->importObj("Assets/Models/Head.obj",true,"Assets/Textures/HeadUV.ppm");
+	aiaiBody = new Mesh();
+	aiaiBody->importObj("Assets/Models/Body.obj",true,"Assets/Textures/BodyUV.ppm");
+	aiaiArm = new Mesh();
+	aiaiArm->importObj("Assets/Models/Arm.obj",true,"Assets/Textures/ArmUV.ppm");
 }
 
 /* display function - GLUT display callback function
  *		clears the screen, sets the camera position
  */
 void display(void){
+	angle += 5.0f;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
@@ -86,8 +95,23 @@ void display(void){
 	gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
 
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
+		glRotatef(angle, 0,0.6f,0.8f);
 		//glutSolidCube(1);
 		aiaiHead->drawMesh();
+		glTranslatef(0,-1.7f,0);
+		aiaiBody->drawMesh();
+		glTranslatef(0,0.9f,0);
+		glPushMatrix();
+			glTranslatef(1.3f,0,0);
+			glRotatef(40,0,0,1);
+			aiaiArm->drawMesh();
+		glPopMatrix();
+		glPushMatrix();
+			glTranslatef(-1.3f,0,0);
+			glRotatef(180,0,1,0);
+			glRotatef(40,0,0,1);
+			aiaiArm->drawMesh();
+		glPopMatrix();
 	glPopMatrix();
 	//swap buffers
 	glutSwapBuffers();

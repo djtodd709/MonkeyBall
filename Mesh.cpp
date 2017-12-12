@@ -19,10 +19,61 @@
 
 Mesh::Mesh(){}
 
-/*obj for blender - turn every selection off to wirte file in simplest form - tick selection only*/
+GLubyte* Mesh::LoadPPM(char* file, int* width, int* height, int* max)
+{
+	GLubyte* img;
+	FILE *fd;
+	int n, m;
+	int  k, nm;
+	char c;
+	int i;
+	char b[100];
+	float s;
+	int red, green, blue;
 
-//WRITE OBJ IMPORTER
-bool Mesh::importObj(const char * path, bool textured)
+	fd = fopen(file, "r");
+	fscanf(fd,"%[^\n] ",b);
+	if(b[0]!='P'|| b[1] != '3')
+	{
+		printf("%s is not a PPM file!\n",file);
+		exit(0);
+	}
+	printf("%s is a PPM file\n", file);
+	fscanf(fd, "%c",&c);
+	while(c == '#')
+	{
+		fscanf(fd, "%[^\n] ", b);
+		printf("%s\n",b);
+		fscanf(fd, "%c",&c);
+	}
+	ungetc(c,fd);
+	fscanf(fd, "%d %d %d", &n, &m, &k);
+
+	printf("%d rows  %d columns  max value= %d\n",n,m,k);
+
+	nm = n*m;
+
+	img = (GLubyte*)(malloc(3*sizeof(GLuint)*nm));
+
+	s=255.0/k;
+
+
+	for(i=0;i<nm;i++)
+	{
+		fscanf(fd,"%d %d %d",&red, &green, &blue );
+		img[3*nm-3*i-3]=red*s;
+		img[3*nm-3*i-2]=green*s;
+		img[3*nm-3*i-1]=blue*s;
+	}
+
+	*width = n;
+	*height = m;
+	*max = k;
+
+	return img;
+}
+
+bool Mesh::importObj(const char * path, bool textured, char * texPath)
 {
   std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
   std::vector< v3* > temp_vertices;
@@ -104,14 +155,28 @@ bool Mesh::importObj(const char * path, bool textured)
     v3* normal = temp_normals[ normalIndex-1 ];
     out_normals.push_back(normal);
   }
+  if(textured){
+    tex = Mesh::LoadPPM(texPath, &width, &height, &max);
+  }
+
   return true;
 }
 
 //function for actually rendering/drawing the terrain mesh
 void Mesh::drawMesh(){
+	glBindTexture(GL_TEXTURE_2D, *tex);
+	
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
+
   glBegin(GL_TRIANGLES);
-  for( unsigned int i=0; i<out_vertices.size(); i++ ){
-    glVertex3f(out_vertices[i]->x,out_vertices[i]->y,out_vertices[i]->z);
-  }
+    for( unsigned int i=0; i<out_vertices.size(); i++ ){
+      glNormal3f(out_normals[i]->x,out_normals[i]->y,out_normals[i]->z);
+      glTexCoord2f((out_uvs[i]->x*-1)+1,out_uvs[i]->y);
+      glVertex3f(out_vertices[i]->x,out_vertices[i]->y,out_vertices[i]->z);
+    }
   glEnd();
 }
