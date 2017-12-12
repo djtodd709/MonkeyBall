@@ -13,8 +13,7 @@
 #  include <GL/freeglut.h>
 #endif
 
-#include "Mesh.h"
-#include "MathHelper.h"
+#include "GameState.h"
 Mesh *aiaiHead;
 
 #define X 0
@@ -74,7 +73,6 @@ void init(void){
 
 	aiaiHead = new Mesh();
 	aiaiHead->importObj("Assets/Models/Monkey.obj",false);
-
 }
 
 /* display function - GLUT display callback function
