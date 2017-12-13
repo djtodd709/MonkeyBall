@@ -22,6 +22,8 @@
 #define Y 1
 #define Z 2
 
+//DEBUG
+bool debugMode = true;
 
 //STRING DUMP
 char* aiaiHeadObjPath = (char*)"Assets/Models/Head.obj";
@@ -48,6 +50,9 @@ float m_dif[4] = {1.0f,1.0f,1.0f,1};
 float m_amb[4] = {0.5f,0.5f,0.5f,1};
 float m_spe[4] = {1.0f,1.0f,1.0f,1};
 float shiny = 10;
+
+float m_temp[4] = {0,0,0,1};
+float no_mat[4] = {0,0,0,1};
 
 Camera* orbitCam;
 
@@ -116,9 +121,19 @@ void display(void){
 	//gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
 	gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
 	
-	orbitCam->orbitView(orbitCam->camDist, orbitCam->camTwist, orbitCam->camElev, orbitCam->camAzimuth);
+	orbitCam->orbitView();
 
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
+	
+		if (debugMode){
+			m_temp[0] = 1; m_temp[1] = 0; m_temp[2] = 0;
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, m_temp);
+			glPointSize(3);
+			glBegin(GL_POINTS);
+				glVertex3f(orbitCam->camPos->x,orbitCam->camPos->y,orbitCam->camPos->z);
+			glEnd();
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, no_mat);
+		}
 		glPushMatrix(); //Draw temp ground plane
 			glTranslatef(0,groundHeight,0); //Move the ground plane down from the origin a bit
 			glBegin(GL_QUADS);
@@ -228,7 +243,7 @@ void reshape(int w, int h){
 	glViewport(0, 0, w, h);			//adjust viewport to new height and width
 }
 
-gameUpdate(float dt)
+void gameUpdate(float dt)
 {
 	//Values at time of frame update
 	game->tick(dt, mx, my, mButtonsPressed, keysPressed);

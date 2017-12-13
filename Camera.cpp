@@ -15,7 +15,7 @@
 
 Camera::Camera()
 {
-	camPos = new v3;	//where the camera is
+	camPos = new v3; //where the camera is
 	camPos->x = 10;
 	camPos->y = 2;
 	camPos->z = 10;
@@ -23,7 +23,7 @@ Camera::Camera()
 	camTarget->x = 0;
 	camTarget->y = 2;
 	camTarget->z = 0;
-	
+
 	camDist = -5;
 	camTwist = 0;
 	camElev = 0;
@@ -32,22 +32,23 @@ Camera::Camera()
 	camZ = 0;
 }
 
-void Camera::orbitView(float dist, float twist, float elev, float azimuth)
+void Camera::orbitView(void)
 {
 	//printf("Dist: %f; Twist: %f; Elev: %f; Azim: %f\n", dist, twist, elev, azimuth);
-	if (dist > 1) {
-		dist = 1;
+	if (this->camDist > 1) {
+		camDist = 1;
 	}
-	if (elev < -85) {
-		elev = -85;
-	} else if (elev > 85) {
-		elev = 85;
+	if (camElev < -85) {
+		camElev = -85;
+	} else if (camElev > 85) {
+		camElev = 85;
 	}
-	glTranslatef(0.0, 0.0, dist);
-	glRotatef(-twist, 0.0, 0.0, 1.0);
-	glRotatef(-elev, 1.0, 0.0, 0.0);
-	//glTranslatef(-camX, 0, 0);
-	//glTranslatef(0, 0, -camZ);
-	glRotatef(azimuth, 0.0, 1.0, 0.0);
-	//glTranslatef(-(float)gridsize / 2, 0, -(float)gridsize/2);
+
+	glTranslatef(0.0, 0.0, camDist);
+	glRotatef(-camElev, 1.0, 0.0, 0.0);
+	glRotatef(camAzimuth, 0.0, 1.0, 0.0);
+	glRotatef(-camTwist, 0.0, 0.0, 1.0);
+	glTranslatef(-camPos->x, 0, 0);
+	glTranslatef(0, -camPos->y, 0);
+	glTranslatef(0, 0, -camPos->z);
 }

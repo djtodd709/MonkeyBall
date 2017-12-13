@@ -6,7 +6,7 @@
 class Camera{
 public:
 	Camera();
-	void orbitView (float dist, float twist, float elev, float azimuth);
+	void orbitView (void);
 
 	//position of camera and target. camPos is scaled to the size of the terrain
 	v3* camPos; //where the camera is
