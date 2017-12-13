@@ -35,6 +35,11 @@ void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 		//gameObjects;
 		//uiElements;
 	}
+	
+	prevX = mx;
+	prevY = my;
+	prevMButtons = mButtons;
+	keysPressed = keyButtons;
 }
 
 void GameState::setState(CurrentState newState)

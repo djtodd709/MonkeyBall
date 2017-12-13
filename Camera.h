@@ -1,6 +1,24 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-void orbitView (float dist, float twist, float elev, float azimuth);
+#include "MathHelper.h"
 
-#endif /* CAMERA_H */
+class Camera{
+public:
+	Camera();
+	void orbitView (float dist, float twist, float elev, float azimuth);
+
+	//position of camera and target. camPos is scaled to the size of the terrain
+	v3* camPos; //where the camera is
+	v3* camTarget;
+
+	//Orbit cam vars
+	float camDist;
+	float camTwist;
+	float camElev;
+	float camAzimuth;
+	float camX;
+	float camZ;
+//private:
+};
+#endif

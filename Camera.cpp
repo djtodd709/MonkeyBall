@@ -1,4 +1,3 @@
-#include "Camera.h"
 #include <stdio.h>
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
@@ -10,9 +9,30 @@
 #include <GL/freeglut.h>
 #endif
 
+#include "Camera.h"
+
 //Camera movement function
 
-void orbitView(float dist, float twist, float elev, float azimuth)
+Camera::Camera()
+{
+	camPos = new v3;	//where the camera is
+	camPos->x = 10;
+	camPos->y = 2;
+	camPos->z = 10;
+	camTarget = new v3;
+	camTarget->x = 0;
+	camTarget->y = 2;
+	camTarget->z = 0;
+	
+	camDist = -5;
+	camTwist = 0;
+	camElev = 0;
+	camAzimuth = 0;
+	camX = 0;
+	camZ = 0;
+}
+
+void Camera::orbitView(float dist, float twist, float elev, float azimuth)
 {
 	//printf("Dist: %f; Twist: %f; Elev: %f; Azim: %f\n", dist, twist, elev, azimuth);
 	if (dist > 1) {

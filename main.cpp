@@ -17,13 +17,11 @@
 #include "Camera.h"
 
 #include "Mesh.h"
-Mesh *aiaiHead;
-Mesh *aiaiBody;
-Mesh *aiaiArm;
 
 #define X 0
 #define Y 1
 #define Z 2
+
 
 //STRING DUMP
 char* aiaiHeadObjPath = (char*)"Assets/Models/Head.obj";
@@ -31,7 +29,7 @@ char* aiaiHeadUVPath = (char*)"Assets/Textures/HeadUV.ppm";
 char* aiaiBodyObjPath = (char*)"Assets/Models/Body.obj";
 char* aiaiBodyUVPath = (char*)"Assets/Textures/BodyUV.ppm";
 char* aiaiArmObjPath = (char*)"Assets/Models/Arm.obj";
-char*aiaiArmUVPath = (char*)"Assets/Textures/ArmUV.ppm";
+char* aiaiArmUVPath = (char*)"Assets/Textures/ArmUV.ppm";
 
 GameState* game;
 //Input values
@@ -51,22 +49,17 @@ float m_amb[4] = {0.5f,0.5f,0.5f,1};
 float m_spe[4] = {1.0f,1.0f,1.0f,1};
 float shiny = 10;
 
-//position of camera and target. camPos is scaled to the size of the terrain
-float camPos[] = {10.0f, 2.0f, 10.0f};	//where the camera is
-float camTarget[] = {0,2.0f,0};
+Camera* orbitCam;
 
-//Orbit cam vars
-float camDist = -5;
-float camTwist = 0;
-float camElev = 0;
-float camAzimuth = 0;
-float camX = 0;
-float camZ = 0;
 //Temp ground
 float groundSize = 10;
 float groundHeight = -2;
 
 float angle = 0.0f;
+
+Mesh* aiaiHead;
+Mesh* aiaiBody;
+Mesh* aiaiArm;
 
 //initial settings for main window. Called (almost) at the begining of the program.
 void init(void){
@@ -123,7 +116,7 @@ void display(void){
 	//gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
 	gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
 	
-	orbitView(camDist, camTwist, camElev, camAzimuth);
+	orbitCam->orbitView(orbitCam->camDist, orbitCam->camTwist, orbitCam->camElev, orbitCam->camAzimuth);
 
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
 		glPushMatrix(); //Draw temp ground plane
@@ -169,10 +162,10 @@ void keyboard(unsigned char key, int xIn, int yIn){
 			break;
                 //Camera zoom
                 case '.':
-			camDist += 1;
+			orbitCam->camDist += 1;
 			break;
                 case ',':
-			camDist -= 1;
+			orbitCam->camDist -= 1;
 			break;
 	}
 }
@@ -181,16 +174,16 @@ void special(int key, int xIn, int yIn)
 {
 	switch (key) {
 		case GLUT_KEY_DOWN:
-			camElev += 1;
+			orbitCam->camElev += 1;
 			break;
 		case GLUT_KEY_UP:
-			camElev -= 1;
+			orbitCam->camElev -= 1;
 			break;
 		case GLUT_KEY_LEFT:
-			camAzimuth += 1;
+			orbitCam->camAzimuth += 1;
 			break;
 		case GLUT_KEY_RIGHT:
-			camAzimuth -= 1;
+			orbitCam->camAzimuth -= 1;
 			break;
 	}
 }
@@ -260,6 +253,7 @@ int main(int argc, char** argv)
 	glutInit(&argc, argv);		//starts up GLUT
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
+	orbitCam = new Camera();
 	mButtonsPressed = new bool [3];
 	keysPressed = new bool [15];
 	game = new GameState();

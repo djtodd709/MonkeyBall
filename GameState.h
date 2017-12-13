@@ -24,7 +24,10 @@ private:
 	//TODO: Create a UIelement class: Should check against mouse input to see if we're hovering over the screen-space co-ords it occupies, and  execute logic on click
 	//vector <UIElement> uiElements;
 	CurrentState state;
-
+	//Prev input values
+	int prevX, prevY;
+	bool* prevMButtons;
+	bool* keysPressed;
 //Maybe include a class to pass in input since previous tick for processing?
 };
 
