@@ -13,6 +13,9 @@
 #  include <GL/freeglut.h>
 #endif
 
+#include "GameState.h"
+#include "Camera.h"
+
 #include "Mesh.h"
 Mesh *aiaiHead;
 Mesh *aiaiBody;
@@ -22,6 +25,24 @@ Mesh *aiaiBall;
 #define X 0
 #define Y 1
 #define Z 2
+
+//DEBUG
+bool debugMode = true;
+
+//STRING DUMP
+char* aiaiHeadObjPath = (char*)"Assets/Models/Head.obj";
+char* aiaiHeadUVPath = (char*)"Assets/Textures/HeadUV.ppm";
+char* aiaiBodyObjPath = (char*)"Assets/Models/Body.obj";
+char* aiaiBodyUVPath = (char*)"Assets/Textures/BodyUV.ppm";
+char* aiaiArmObjPath = (char*)"Assets/Models/Arm.obj";
+char* aiaiArmUVPath = (char*)"Assets/Textures/ArmUV.ppm";
+char* aiaiBallObjPath = (char*)"Assets/Models/BallHalf.obj";
+
+GameState* game;
+//Input values
+int mx, my;
+bool* mButtonsPressed;
+bool* keysPressed;
 
 //Light 0 properties
 float l0pos[4] = {1.0f,10.0f,1.0f,1};
@@ -46,11 +67,22 @@ float m2_spe[4] = {1.0f,1.0f,1.0f,0.7f};
 
 float shiny = 10;
 
+
 //position of camera and target. camPos is scaled to the size of the terrain
 float camPos[] = {20.0f, 5.0f, 20.0f};	//where the camera is
 float camTarget[] = {0,2.0f,0};
 
+float m_temp[4] = {0,0,0,1};
+float no_mat[4] = {0,0,0,1};
+
+Camera* orbitCam;
+
+//Temp ground
+float groundSize = 10;
+float groundHeight = -5;
+
 float angle = 0.0f;
+
 
 //initial settings for main window. Called (almost) at the begining of the program.
 void init(void){
@@ -91,13 +123,13 @@ void init(void){
 	gluPerspective(45, 1, 1, 1000);
 
 	aiaiHead = new Mesh();
-	aiaiHead->importObj("Assets/Models/Head.obj",true,"Assets/Textures/HeadUV.ppm");
+	aiaiHead->importObj(aiaiHeadObjPath,true,aiaiHeadUVPath);
 	aiaiBody = new Mesh();
-	aiaiBody->importObj("Assets/Models/Body.obj",true,"Assets/Textures/BodyUV.ppm");
+	aiaiBody->importObj(aiaiBodyObjPath,true,aiaiBodyUVPath);
 	aiaiArm = new Mesh();
-	aiaiArm->importObj("Assets/Models/Arm.obj",true,"Assets/Textures/ArmUV.ppm");
+	aiaiArm->importObj(aiaiArmObjPath,true,aiaiArmUVPath);
 	aiaiBall = new Mesh();
-	aiaiBall->importObj("Assets/Models/BallHalf.obj",false,"");
+	aiaiBall->importObj(aiaiBallObjPath,false,"");
 }
 
 /* display function - GLUT display callback function
@@ -109,9 +141,34 @@ void display(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
+	//gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
+	gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
+
+	orbitCam->orbitView();
 
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
+
+		if (debugMode){
+			m_temp[0] = 1; m_temp[1] = 0; m_temp[2] = 0;
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, m_temp);
+			glPointSize(3);
+			glBegin(GL_POINTS);
+				glVertex3f(orbitCam->camPos->x,orbitCam->camPos->y,orbitCam->camPos->z);
+			glEnd();
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, no_mat);
+		}
+		glPushMatrix(); //Draw temp ground plane
+			glTranslatef(0,groundHeight,0); //Move the ground plane down from the origin a bit
+			glBegin(GL_QUADS);
+				glNormal3f(0,1,0);
+				glVertex3i(groundSize,0,groundSize);
+				glVertex3i(groundSize,0,-groundSize);
+				glVertex3i(-groundSize,0,-groundSize);
+				glVertex3i(-groundSize,0,groundSize);
+			glEnd();
+		glPopMatrix();
+
+
 		glPushMatrix();
 			//Apply material settings
 			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m0_dif);
@@ -162,7 +219,63 @@ void keyboard(unsigned char key, int xIn, int yIn){
 		case 27:	//27 is the esc key
 			exit(0);
 			break;
+                //Camera zoom
+                case '.':
+			orbitCam->camDist += 1;
+			break;
+                case ',':
+			orbitCam->camDist -= 1;
+			break;
 	}
+}
+
+void special(int key, int xIn, int yIn)
+{
+	switch (key) {
+		case GLUT_KEY_DOWN:
+			orbitCam->camElev += 1;
+			break;
+		case GLUT_KEY_UP:
+			orbitCam->camElev -= 1;
+			break;
+		case GLUT_KEY_LEFT:
+			orbitCam->camAzimuth += 1;
+			break;
+		case GLUT_KEY_RIGHT:
+			orbitCam->camAzimuth -= 1;
+			break;
+	}
+}
+//OpenGL mouse functions
+void mouseClick(int btn, int state, int x, int y)
+{
+	if (btn == GLUT_LEFT_BUTTON)
+	{
+		if(state == GLUT_DOWN)
+		{
+			mButtonsPressed[0] = true;
+		}
+	}
+	if (btn == GLUT_RIGHT_BUTTON)
+	{
+		if (state == GLUT_DOWN)
+		{
+			mButtonsPressed [1] = true;
+		}
+	}
+	if (btn == GLUT_MIDDLE_BUTTON)
+	{
+		if (state == GLUT_DOWN)
+		{
+			mButtonsPressed [2] = true;
+		}
+	}
+}
+
+void mouseMove(int x, int y)
+{
+	mx = x;
+	my = y;
 }
 
 //Reshape function for main window.
@@ -174,9 +287,21 @@ void reshape(int w, int h){
 	glViewport(0, 0, w, h);			//adjust viewport to new height and width
 }
 
+void gameUpdate(float dt)
+{
+	//Values at time of frame update
+	game->tick(dt, mx, my, mButtonsPressed, keysPressed);
+
+	//Flush input
+	mButtonsPressed[0] = false;
+	mButtonsPressed[1] = false;
+	mButtonsPressed[2] = false;
+}
+
 //FPS controller
 void FPSTimer(int value){
-	glutTimerFunc(17, FPSTimer, 0);
+	glutTimerFunc(value, FPSTimer, 0);
+	gameUpdate((float)value);
 	glutPostRedisplay();
 }
 
@@ -187,6 +312,11 @@ int main(int argc, char** argv)
 	glutInit(&argc, argv);		//starts up GLUT
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
+	orbitCam = new Camera();
+	mButtonsPressed = new bool [3];
+	keysPressed = new bool [15];
+	game = new GameState();
+
 	//MAIN WINDOW
 	glutInitWindowSize(800, 400);	//setup window size and position
 	glutInitWindowPosition(50, 50);
@@ -194,6 +324,11 @@ int main(int argc, char** argv)
 
 	glutDisplayFunc(display);					//registers "display" as the display callback function
 	glutKeyboardFunc(keyboard);				//registers "keyboard" as the keyboard callback function
+	glutSpecialFunc(special);
+	//mouse callbacks
+	glutMouseFunc(mouseClick);
+	glutMotionFunc(mouseMove);
+	glutPassiveMotionFunc(mouseMove);
 	glutTimerFunc(17, FPSTimer, 0);		//registers "FPSTimer" as the timer callback function
 	glutReshapeFunc(reshape);					//registers "reshape" as the reshape callback function
 

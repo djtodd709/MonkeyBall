@@ -7,7 +7,7 @@
 //Base class for all game objects - each should include a model and  collision geometry.
 class Entity{
 public:
-	Entity(const char * pathToAssetFolder);
+	Entity(char * pathToAssetFolder);
 
 	void drawMesh();
 	v3 checkCollision(v3 incoming);
@@ -15,10 +15,10 @@ public:
 	virtual void onCollision();
 private:
 
-	bool importModel(const char * path, bool textured);
-	bool importCollision(const char * path, bool textured);
-	Mesh model;
-	Collider collisionGeometry;
+	bool importModel(char* path, bool textured);
+	bool importCollision(char* path);
+	Mesh* model;
+	Collider* collisionGeometry;
 };
 
 #endif

@@ -16,27 +16,43 @@
 #include <fstream>
 #include <math.h>
 
-Entity::Entity(const char * pathToAssetFolder)
+Entity::Entity(char* pathToAssetFolder)
 {
-	char * modelPath = 	strcpy(modelPath, pathToAssetFolder);		strcat(modelPath,".obj");
-	char * collisionPath = strcpy(collisionPath, pathToAssetFolder);	strcat(collisionPath,"collision.obj");
+	char* modelPath = 	strcpy(modelPath, pathToAssetFolder);		strcat(modelPath,".obj");
+	char* collisionPath = strcpy(collisionPath, pathToAssetFolder);	strcat(collisionPath,"collision.obj");
 	//Load the model data 
-	this.model = new Mesh();
-	this.model = model.importModel(const char * modelPath, bool textured);
-	this.collisionGeometry = new Collider();
-	this.collisionGeometry = collisionGeometry.importCollision(const char * collisionPath);
+	model = new Mesh();
+	if (!importModel(modelPath, true))
+	{
+		printf("Failed to import model at:%s", modelPath);
+	}
+	collisionGeometry = new Collider();
+	if (!importCollision(collisionPath))
+	{
+		printf("Failed to import model at:%s", modelPath);
+	}
 }
 
-bool importCollision(const char * path);
+bool Entity::importModel(char* path, bool textured)
+{
+	//model = importModel(modelPath, true);
+	return false;
+}
+
+bool Entity::importCollision(char* path)
+{
+	//collisionGeometry = importCollision(char* collisionPath);
+	return false;
+}
 
 //Passthroughs
 void Entity::drawMesh()
 {
-	model.drawMesh();
+	model->drawMesh();
 }
 v3 Entity::checkCollision(v3 incoming)
 {
-	return collisionGeometry.checkCollision(incoming);
+	return collisionGeometry->checkCollision(incoming);
 }
 
 void Entity::onTick()
