@@ -17,6 +17,7 @@
 Mesh *aiaiHead;
 Mesh *aiaiBody;
 Mesh *aiaiArm;
+Mesh *aiaiBall;
 
 #define X 0
 #define Y 1
@@ -28,14 +29,25 @@ float l0dif[4] = {0.7f,0.7f,0.7f,1};
 float l0amb[4] = {0.1f,0.1f,0.1f,1};
 float l0spe[4] = {1,1,1,1};
 
-//Material properties
-float m_dif[4] = {1.0f,1.0f,1.0f,1};
-float m_amb[4] = {0.5f,0.5f,0.5f,1};
-float m_spe[4] = {1.0f,1.0f,1.0f,1};
+//Material properties - white
+float m0_dif[4] = {1.0f,1.0f,1.0f,1};
+float m0_amb[4] = {0.5f,0.5f,0.5f,1};
+float m0_spe[4] = {1.0f,1.0f,1.0f,1};
+
+//Material properties - white alpha
+float m1_dif[4] = {1.0f,1.0f,1.0f,0.8f};
+float m1_amb[4] = {0.5f,0.5f,0.5f,0.8f};
+float m1_spe[4] = {1.0f,1.0f,1.0f,0.8f};
+
+//Material properties - red alpha
+float m2_dif[4] = {1.0f,0.2f,0.2f,0.7f};
+float m2_amb[4] = {0.5f,0.1f,0.1f,0.7f};
+float m2_spe[4] = {1.0f,1.0f,1.0f,0.7f};
+
 float shiny = 10;
 
 //position of camera and target. camPos is scaled to the size of the terrain
-float camPos[] = {10.0f, 2.0f, 10.0f};	//where the camera is
+float camPos[] = {20.0f, 5.0f, 20.0f};	//where the camera is
 float camTarget[] = {0,2.0f,0};
 
 float angle = 0.0f;
@@ -52,6 +64,9 @@ void init(void){
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
 	glEnable(GL_TEXTURE_2D);
 
 	//Implement backface culling
@@ -65,9 +80,9 @@ void init(void){
 	glLightfv(GL_LIGHT0, GL_SPECULAR, l0spe);
 
 	//Apply material settings
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m_dif);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m_amb);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_spe);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m0_dif);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m0_amb);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m0_spe);
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 
 	//adjust view
@@ -81,6 +96,8 @@ void init(void){
 	aiaiBody->importObj("Assets/Models/Body.obj",true,"Assets/Textures/BodyUV.ppm");
 	aiaiArm = new Mesh();
 	aiaiArm->importObj("Assets/Models/Arm.obj",true,"Assets/Textures/ArmUV.ppm");
+	aiaiBall = new Mesh();
+	aiaiBall->importObj("Assets/Models/BallHalf.obj",false,"");
 }
 
 /* display function - GLUT display callback function
@@ -95,22 +112,42 @@ void display(void){
 	gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
 
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
-		glRotatef(angle, 0,0.6f,0.8f);
-		//glutSolidCube(1);
-		aiaiHead->drawMesh();
-		glTranslatef(0,-1.7f,0);
-		aiaiBody->drawMesh();
-		glTranslatef(0,0.9f,0);
 		glPushMatrix();
-			glTranslatef(1.3f,0,0);
-			glRotatef(40,0,0,1);
-			aiaiArm->drawMesh();
+			//Apply material settings
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m0_dif);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m0_amb);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m0_spe);
+
+			aiaiHead->drawMesh();
+			glTranslatef(0,-1.7f,0);
+			aiaiBody->drawMesh();
+			glTranslatef(0,0.9f,0);
+			glPushMatrix();
+				glTranslatef(1.3f,0,0);
+				glRotatef(40,0,0,1);
+				aiaiArm->drawMesh();
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(-1.3f,0,0);
+				glRotatef(180,0,1,0);
+				glRotatef(40,0,0,1);
+				aiaiArm->drawMesh();
+			glPopMatrix();
 		glPopMatrix();
 		glPushMatrix();
-			glTranslatef(-1.3f,0,0);
-			glRotatef(180,0,1,0);
-			glRotatef(40,0,0,1);
-			aiaiArm->drawMesh();
+			glScalef(6,6,6);
+			glRotatef(angle, 1,0,0);
+			//Apply material settings
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m2_dif);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m2_amb);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m2_spe);
+			aiaiBall->drawMesh();
+			glRotatef(180, 1,0,0);
+			//Apply material settings
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m1_dif);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m1_amb);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m1_spe);
+			aiaiBall->drawMesh();
 		glPopMatrix();
 	glPopMatrix();
 	//swap buffers

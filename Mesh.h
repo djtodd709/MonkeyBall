@@ -16,6 +16,7 @@ private:
   std::vector < v3* > out_vertices;
   std::vector < v2* > out_uvs;
   std::vector < v3* > out_normals;
+  bool TEX;
   GLubyte *tex;
   GLubyte storedTex;
   int width, height, max;

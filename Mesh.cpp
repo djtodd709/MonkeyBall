@@ -155,27 +155,32 @@ bool Mesh::importObj(const char * path, bool textured, char * texPath)
     v3* normal = temp_normals[ normalIndex-1 ];
     out_normals.push_back(normal);
   }
+	TEX = false;
   if(textured){
     tex = Mesh::LoadPPM(texPath, &width, &height, &max);
+		TEX = true;
   }
-
   return true;
 }
 
 //function for actually rendering/drawing the terrain mesh
 void Mesh::drawMesh(){
-	glBindTexture(GL_TEXTURE_2D, *tex);
-	
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
+	if(TEX){
+		glBindTexture(GL_TEXTURE_2D, *tex);
+
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
+	}
 
   glBegin(GL_TRIANGLES);
     for( unsigned int i=0; i<out_vertices.size(); i++ ){
       glNormal3f(out_normals[i]->x,out_normals[i]->y,out_normals[i]->z);
-      glTexCoord2f((out_uvs[i]->x*-1)+1,out_uvs[i]->y);
+			if(TEX){
+				glTexCoord2f((out_uvs[i]->x*-1)+1,out_uvs[i]->y);
+			}
       glVertex3f(out_vertices[i]->x,out_vertices[i]->y,out_vertices[i]->z);
     }
   glEnd();
