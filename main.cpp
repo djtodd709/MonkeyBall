@@ -13,6 +13,7 @@
 #  include <GL/freeglut.h>
 #endif
 
+#include "GameState.h"
 #include "Camera.h"
 
 #include "Mesh.h"
@@ -23,6 +24,20 @@ Mesh *aiaiArm;
 #define X 0
 #define Y 1
 #define Z 2
+
+//STRING DUMP
+char* aiaiHeadObjPath = (char*)"Assets/Models/Head.obj";
+char* aiaiHeadUVPath = (char*)"Assets/Textures/HeadUV.ppm";
+char* aiaiBodyObjPath = (char*)"Assets/Models/Body.obj";
+char* aiaiBodyUVPath = (char*)"Assets/Textures/BodyUV.ppm";
+char* aiaiArmObjPath = (char*)"Assets/Models/Arm.obj";
+char*aiaiArmUVPath = (char*)"Assets/Textures/ArmUV.ppm";
+
+GameState* game;
+//Input values
+int mx, my;
+bool* mButtonsPressed;
+bool* keysPressed;
 
 //Light 0 properties
 float l0pos[4] = {1.0f,10.0f,1.0f,1};
@@ -89,11 +104,11 @@ void init(void){
 	gluPerspective(45, 1, 1, 1000);
 
 	aiaiHead = new Mesh();
-	aiaiHead->importObj("Assets/Models/Head.obj",true,"Assets/Textures/HeadUV.ppm");
+	aiaiHead->importObj(aiaiHeadObjPath,true,aiaiHeadUVPath);
 	aiaiBody = new Mesh();
-	aiaiBody->importObj("Assets/Models/Body.obj",true,"Assets/Textures/BodyUV.ppm");
+	aiaiBody->importObj(aiaiBodyObjPath,true,aiaiBodyUVPath);
 	aiaiArm = new Mesh();
-	aiaiArm->importObj("Assets/Models/Arm.obj",true,"Assets/Textures/ArmUV.ppm");
+	aiaiArm->importObj(aiaiArmObjPath,true,aiaiArmUVPath);
 }
 
 /* display function - GLUT display callback function
@@ -106,7 +121,7 @@ void display(void){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	//gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
-        gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
+	gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
 	
 	orbitView(camDist, camTwist, camElev, camAzimuth);
 
@@ -179,6 +194,37 @@ void special(int key, int xIn, int yIn)
 			break;
 	}
 }
+//OpenGL mouse functions
+void mouseClick(int btn, int state, int x, int y)
+{
+	if (btn == GLUT_LEFT_BUTTON)
+	{
+		if(state == GLUT_DOWN)
+		{
+			mButtonsPressed[0] = true;
+		}
+	}
+	if (btn == GLUT_RIGHT_BUTTON)
+	{
+		if (state == GLUT_DOWN)
+		{
+			mButtonsPressed [1] = true;
+		}
+	}
+	if (btn == GLUT_MIDDLE_BUTTON)
+	{
+		if (state == GLUT_DOWN)
+		{
+			mButtonsPressed [2] = true;
+		}
+	}
+}
+
+void mouseMove(int x, int y)
+{
+	mx = x;
+	my = y;
+}
 
 //Reshape function for main window.
 void reshape(int w, int h){
@@ -189,9 +235,21 @@ void reshape(int w, int h){
 	glViewport(0, 0, w, h);			//adjust viewport to new height and width
 }
 
+gameUpdate(float dt)
+{
+	//Values at time of frame update
+	game->tick(dt, mx, my, mButtonsPressed, keysPressed);
+	
+	//Flush input
+	mButtonsPressed[0] = false;
+	mButtonsPressed[1] = false;
+	mButtonsPressed[2] = false;
+}
+
 //FPS controller
 void FPSTimer(int value){
-	glutTimerFunc(17, FPSTimer, 0);
+	glutTimerFunc(value, FPSTimer, 0);
+	gameUpdate((float)value);
 	glutPostRedisplay();
 }
 
@@ -202,6 +260,10 @@ int main(int argc, char** argv)
 	glutInit(&argc, argv);		//starts up GLUT
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 
+	mButtonsPressed = new bool [3];
+	keysPressed = new bool [15];
+	game = new GameState();
+	
 	//MAIN WINDOW
 	glutInitWindowSize(800, 400);	//setup window size and position
 	glutInitWindowPosition(50, 50);
@@ -210,6 +272,10 @@ int main(int argc, char** argv)
 	glutDisplayFunc(display);					//registers "display" as the display callback function
 	glutKeyboardFunc(keyboard);				//registers "keyboard" as the keyboard callback function
 	glutSpecialFunc(special);
+	//mouse callbacks
+	glutMouseFunc(mouseClick);
+	glutMotionFunc(mouseMove);
+	glutPassiveMotionFunc(mouseMove);
 	glutTimerFunc(17, FPSTimer, 0);		//registers "FPSTimer" as the timer callback function
 	glutReshapeFunc(reshape);					//registers "reshape" as the reshape callback function
 

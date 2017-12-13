@@ -1,11 +1,14 @@
 #ifndef __COLLIDER_H__
 #define __COLLIDER_H__
 
+#include <vector>
+#include "MathHelper.h"
+
 //Entity collder, attach to an Entity object
 class Collider{
 public:
 	Collider();
-	bool importCollision(const char * path);
+	bool importCollision(char* path);
 	//Checks if  incoming vector collides with the object, returns the normal vector of whichever surface we hit.
 	v3 checkCollision(v3 incoming);
 private:

@@ -12,24 +12,24 @@
 
 GameState::GameState()
 {
-	state = CurrentState.MAIN_MENU;
+	state = MAIN_MENU;
 }
 
-GameState::tick(float dt)
+void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 {
 	//TODO: Implement game loop for each state
-	if (state == CurrentState.MAIN_MENU)
+	if (state == MAIN_MENU)
 	{
 		//Display and get input w/ ui Elements
 		//uiElements;
 	}
-	else if (state == CurrentState.IN_GAME)
+	else if (state == IN_GAME)
 	{
 		//Display and get input w/ gameObjects, display UI.
 		//gameObjects;
 		//uiElements;
 	}
-	else if (state == CurrentState.GAME_PAUSED)
+	else if (state == GAME_PAUSED)
 	{
 		//Display gameObjects, display and get input w/ UI.
 		//gameObjects;
@@ -37,7 +37,7 @@ GameState::tick(float dt)
 	}
 }
 
-GameState::setState(CurrentState newState)
+void GameState::setState(CurrentState newState)
 {
 
 }
