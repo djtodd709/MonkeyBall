@@ -14,6 +14,7 @@
 #endif
 
 #include "GameState.h"
+#include "Player.h"
 #include "Camera.h"
 
 #include "Mesh.h"
@@ -85,6 +86,7 @@ float m_temp[4] = {0,0,0,1};
 float no_mat[4] = {0,0,0,1};
 
 Camera* orbitCam;
+Player* playerObj;
 
 //Temp ground
 float groundSize = 10;
@@ -131,6 +133,15 @@ void init(void){
 	glLoadIdentity();
 	gluPerspective(45, 1, 1, 1000);
 
+	orbitCam = new Camera();
+	mButtonsPressed = new bool[3];
+	keysPressed = new bool[15];
+	game = new GameState();
+	printf("hamn'");
+	playerObj = new Player(aiaiBallObjPath);
+	game->gameObjects.push_back(playerObj);
+	game->cam = orbitCam;
+
 	aiaiHead = new Mesh();
 	aiaiHead->importObj(aiaiHeadObjPath,true,aiaiHeadUVPath);
 	aiaiBody = new Mesh();
@@ -139,7 +150,8 @@ void init(void){
 	aiaiArm->importObj(aiaiArmObjPath,true,aiaiArmUVPath);
 	aiaiBall = new Mesh();
 	aiaiBall->importObj(aiaiBallObjPath,false,"");
-
+	printf("eggs");
+	orbitCam->setTargetObject(playerObj->rootPos);
 
 	stage = new Mesh();
 	stage->importObj(stagePath0,true,stageUVPath);
@@ -155,24 +167,18 @@ void display(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	//gluLookAt(camPos[X], camPos[Y], camPos[Z], camTarget[X], camTarget[Y], camTarget[Z], 0,1,0);
-	gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
-
-	orbitCam->orbitView();
-
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
-
 		//Apply material settings
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, s_dif);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, s_amb);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, s_spe);
-
-		if (debugMode){
+		if (debugMode)
+		{
 			m_temp[0] = 1; m_temp[1] = 0; m_temp[2] = 0;
 			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, m_temp);
 			glPointSize(3);
 			glBegin(GL_POINTS);
-				glVertex3f(orbitCam->camPos->x,orbitCam->camPos->y,orbitCam->camPos->z);
+				glVertex3f(orbitCam->camPos->x,orbitCam->camPos->y,orbitCam->camPos->z); //Crosshair
 			glEnd();
 			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, no_mat);
 		}
@@ -247,16 +253,18 @@ void special(int key, int xIn, int yIn)
 {
 	switch (key) {
 		case GLUT_KEY_DOWN:
-			orbitCam->camElev += 1;
+			playerObj->rootPos->x += 1;
+			//orbitCam->camElev += 1;
 			break;
 		case GLUT_KEY_UP:
-			orbitCam->camElev -= 1;
+			//orbitCam->camElev -= 1;
 			break;
 		case GLUT_KEY_LEFT:
-			orbitCam->camAzimuth += 1;
+			playerObj->rootPos->y += 1;
+			//orbitCam->camAzimuth += 1;
 			break;
 		case GLUT_KEY_RIGHT:
-			orbitCam->camAzimuth -= 1;
+			//orbitCam->camAzimuth -= 1;
 			break;
 	}
 }
@@ -325,11 +333,6 @@ int main(int argc, char** argv)
 	srand(time(NULL));				//initialize randomization
 	glutInit(&argc, argv);		//starts up GLUT
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-
-	orbitCam = new Camera();
-	mButtonsPressed = new bool [3];
-	keysPressed = new bool [15];
-	game = new GameState();
 
 	//MAIN WINDOW
 	glutInitWindowSize(800, 400);	//setup window size and position

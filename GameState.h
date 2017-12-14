@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Entity.h"
+#include "Camera.h";
 
 using std::vector;
 
@@ -19,8 +20,9 @@ public:
 	GameState();
 	void tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons);
 	void setState(CurrentState newState);
+	vector <Entity*> gameObjects;
+	Camera* cam;
 private:
-	vector <Entity> gameObjects;
 	//TODO: Create a UIelement class: Should check against mouse input to see if we're hovering over the screen-space co-ords it occupies, and  execute logic on click
 	//vector <UIElement> uiElements;
 	CurrentState state;

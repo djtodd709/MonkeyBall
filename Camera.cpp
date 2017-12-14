@@ -32,6 +32,18 @@ Camera::Camera()
 	camZ = 0;
 }
 
+//Takes a pointer to a position vector, which becomes the followed camera target
+void Camera::setTargetObject(v3* targetPos)
+{
+	camTarget = targetPos;
+}
+
+void Camera::update()
+{
+	gluLookAt(camPos->x, camPos->y, camPos->z, camTarget->x, camTarget->y, camTarget->z, 0, 1, 0);
+	orbitView();
+}
+
 void Camera::orbitView(void)
 {
 	//printf("Dist: %f; Twist: %f; Elev: %f; Azim: %f\n", dist, twist, elev, azimuth);

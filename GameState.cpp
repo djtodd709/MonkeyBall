@@ -35,7 +35,8 @@ void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 		//gameObjects;
 		//uiElements;
 	}
-	
+	cam->update();
+
 	prevX = mx;
 	prevY = my;
 	prevMButtons = mButtons;
