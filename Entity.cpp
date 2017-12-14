@@ -19,22 +19,16 @@
 
 Entity::Entity(const char* pathToAssetFolder)
 {
-	printf("Does this even work");
 	std::string modelPath("");
-	printf("HOO-ERS\n");
 	modelPath.append(pathToAssetFolder);
-	printf("Save me devito");
 	modelPath = modelPath + modelExt;
 	std::string collisionPath (pathToAssetFolder);
 	collisionPath += collisionExt;
 
-	printf("Guess so");
 	char mpca[modelPath.length()]; strcpy(mpca, modelPath.c_str());
 	char cpca[collisionPath.length()]; strcpy(cpca, collisionPath.c_str());
 	//Load the model data
-	printf("Guess so");
 	model = new Mesh();
-	printf("Mesh?");
 	if (!importModel(mpca, true))
 	{
 		printf("Failed to import model at:%s", mpca);

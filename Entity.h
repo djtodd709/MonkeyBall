@@ -9,7 +9,7 @@ class Entity{
 public:
 	Entity(const char * pathToAssetFolder);
 
-	void drawMesh(float repeats);
+	virtual void drawMesh(float repeats);
 	v3 checkCollision(v3 incoming);
 	virtual void onTick();
 	virtual void onCollision();

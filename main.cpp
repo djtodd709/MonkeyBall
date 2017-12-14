@@ -39,6 +39,7 @@ char* aiaiBodyUVPath = (char*)"Assets/Textures/BodyUV.ppm";
 char* aiaiArmObjPath = (char*)"Assets/Models/Arm.obj";
 char* aiaiArmUVPath = (char*)"Assets/Textures/ArmUV.ppm";
 char* aiaiBallObjPath = (char*)"Assets/Models/BallHalf.obj";
+char* aiaiBallUVPath = (char*)""; //Ball has no UV right now
 
 char* stageUVPath = (char*)"Assets/Textures/Stage.ppm";
 char* stagePath0 = (char*)"Assets/Models/Stages/Stage0.obj";
@@ -91,8 +92,6 @@ Player* playerObj;
 //Temp ground
 float groundSize = 10;
 float groundHeight = -5;
-
-float angle = 0.0f;
 
 
 //initial settings for main window. Called (almost) at the begining of the program.
@@ -149,8 +148,11 @@ void init(void){
 	aiaiArm = new Mesh();
 	aiaiArm->importObj(aiaiArmObjPath,true,aiaiArmUVPath);
 	aiaiBall = new Mesh();
-	aiaiBall->importObj(aiaiBallObjPath,false,"");
-	printf("eggs");
+	aiaiBall->importObj(aiaiBallObjPath, false, aiaiBallUVPath);
+	playerObj->head = aiaiHead;
+	playerObj->body = aiaiBody;
+	playerObj->arm = aiaiArm;
+	playerObj->ball = aiaiBall;
 	orbitCam->setTargetObject(playerObj->rootPos);
 
 	stage = new Mesh();
@@ -162,8 +164,6 @@ void init(void){
  *		clears the screen, sets the camera position
  */
 void display(void){
-	angle += 5.0f;
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -188,49 +188,17 @@ void display(void){
 			stage->drawMesh(25);
 		glPopMatrix();
 
+		for (int i = 0; i < game->gameObjects.size(); i++)
+		{
+			game->gameObjects[i]->drawMesh(1);
+		}
 
-		glPushMatrix();
-			//Apply material settings
-			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m0_dif);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m0_amb);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m0_spe);
-
-			aiaiHead->drawMesh(1);
-			glTranslatef(0,-1.7f,0);
-			aiaiBody->drawMesh(1);
-			glTranslatef(0,0.9f,0);
-			glPushMatrix();
-				glTranslatef(1.3f,0,0);
-				glRotatef(40,0,0,1);
-				aiaiArm->drawMesh(1);
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(-1.3f,0,0);
-				glRotatef(180,0,1,0);
-				glRotatef(40,0,0,1);
-				aiaiArm->drawMesh(1);
-			glPopMatrix();
-		glPopMatrix();
-		glPushMatrix();
-			glScalef(6,6,6);
-			glRotatef(angle, 1,0,0);
-			//Apply material settings
-			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m2_dif);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m2_amb);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m2_spe);
-			aiaiBall->drawMesh(1);
-			glRotatef(180, 1,0,0);
-			//Apply material settings
-			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m1_dif);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m1_amb);
-			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m1_spe);
-			aiaiBall->drawMesh(1);
-		glPopMatrix();
 	glPopMatrix();
 	//swap buffers
 	glutSwapBuffers();
 }
 
+//TODO: Move the actual function calls into the game state update loop instead?
 //function for keyboard commands
 void keyboard(unsigned char key, int xIn, int yIn){
 	int mod = glutGetModifiers();
@@ -257,6 +225,7 @@ void special(int key, int xIn, int yIn)
 			//orbitCam->camElev += 1;
 			break;
 		case GLUT_KEY_UP:
+			playerObj->rootPos->x -= 1;
 			//orbitCam->camElev -= 1;
 			break;
 		case GLUT_KEY_LEFT:
@@ -264,6 +233,7 @@ void special(int key, int xIn, int yIn)
 			//orbitCam->camAzimuth += 1;
 			break;
 		case GLUT_KEY_RIGHT:
+			playerObj->rootPos->y -= 1;
 			//orbitCam->camAzimuth -= 1;
 			break;
 	}

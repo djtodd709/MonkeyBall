@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Entity.h"
-#include "Camera.h";
+#include "Camera.h"
 
 using std::vector;
 

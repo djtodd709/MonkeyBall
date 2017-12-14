@@ -179,7 +179,7 @@ void Mesh::drawMesh(float repeats){
     for( unsigned int i=0; i<out_vertices.size(); i++ ){
       glNormal3f(out_normals[i]->x,out_normals[i]->y,out_normals[i]->z);
 			if(TEX){
-				glTexCoord2f(((out_uvs[i]->x*-1)+1)*repeats,out_uvs[i]->y*repeats);
+				glTexCoord2f(((out_uvs[i]->x*-1) + 1)*repeats, out_uvs[i]->y*repeats);
 			}
       glVertex3f(out_vertices[i]->x,out_vertices[i]->y,out_vertices[i]->z);
     }
