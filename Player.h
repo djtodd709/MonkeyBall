@@ -16,6 +16,9 @@ public:
 	virtual void drawMesh(float repeats) override;
 private:
 	float ballAngle = 0.0f;
+	float terminalVelocity = 1.0f;
+	bool isAirborne();
+	v3* velocity;
 
 	//Material properties - white
 	float m0_dif[4] = { 1.0f, 1.0f, 1.0f, 1 };

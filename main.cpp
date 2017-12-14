@@ -186,7 +186,6 @@ void display(void){
 		}
 		glPushMatrix(); //Draw temp ground plane
 			glTranslatef(0,groundHeight,0); //Move the ground plane down from the origin a bit
-
 			stage->drawMesh(25);
 		glPopMatrix();
 		for (int i = 0; i < game->gameObjects.size(); i++)

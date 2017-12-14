@@ -17,11 +17,35 @@ Player::Player(const char * pathToAssetFolder) : Entity(pathToAssetFolder)
 	rootPos->x = 0.0f;
 	rootPos->y = 0.0f;
 	rootPos->z = 0.0f;
+	velocity = new v3;
+	velocity->x = 0.0f;
+	velocity->y = 0.0f;
+	velocity->z = 0.0f;
 }
 
 void Player::onTick()
 {
 	ballAngle += 5.0f;
+	if (isAirborne())
+	{
+		if (velocity->y < terminalVelocity && velocity->y > -terminalVelocity)
+		{
+			velocity->y -= 0.05f;
+		}
+		else
+		{
+			velocity->y = terminalVelocity;
+			printf("Way past fast");
+		}
+	}
+	*rootPos = *rootPos + *velocity;
+	printf("Player pos: %f,%f,%f\n", rootPos->x, rootPos->y, rootPos->z);
+}
+
+bool Player::isAirborne()
+{
+	//TODO: THAR BE MATH HERE
+	return true;
 }
 
 void Player::drawMesh(float repeats)

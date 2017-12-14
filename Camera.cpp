@@ -41,9 +41,11 @@ void Camera::update()
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	/*
 	printf("Dist: %f; Twist: %f; Elev: %f; Azim: %f\n", camDist, camTwist, camElev, camAzimuth);
 	printf("Cam Pos: %f,%f,%f\n", camPos->x, camPos->y, camPos->z);
 	printf("Target Pos: %f,%f,%f\n", camTarget->x, camTarget->y, camTarget->z);
+	*/
 	gluLookAt(camPos->x, camPos->y, camPos->z, camTarget->x, camTarget->y, camTarget->z, 0, 1, 0);
 	//orbitView();
 }
