@@ -9,7 +9,7 @@ public:
   Mesh();
 
   bool importObj(const char * path, bool textured, char * texPath);
-  void drawMesh();
+  void drawMesh(float repeats);
   GLubyte* LoadPPM(char* file, int* width, int* height, int* max);
 
 private:
@@ -18,7 +18,6 @@ private:
   std::vector < v3* > out_normals;
   bool TEX;
   GLubyte *tex;
-  GLubyte storedTex;
   int width, height, max;
 };
 

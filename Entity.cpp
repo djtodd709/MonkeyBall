@@ -20,7 +20,7 @@ Entity::Entity(char* pathToAssetFolder)
 {
 	char* modelPath = 	strcpy(modelPath, pathToAssetFolder);		strcat(modelPath,".obj");
 	char* collisionPath = strcpy(collisionPath, pathToAssetFolder);	strcat(collisionPath,"collision.obj");
-	//Load the model data 
+	//Load the model data
 	model = new Mesh();
 	if (!importModel(modelPath, true))
 	{
@@ -46,9 +46,9 @@ bool Entity::importCollision(char* path)
 }
 
 //Passthroughs
-void Entity::drawMesh()
+void Entity::drawMesh(float repeats)
 {
-	model->drawMesh();
+	model->drawMesh(repeats);
 }
 v3 Entity::checkCollision(v3 incoming)
 {
@@ -57,10 +57,10 @@ v3 Entity::checkCollision(v3 incoming)
 
 void Entity::onTick()
 {
-	
+
 }
 
 void Entity::onCollision()
 {
-	
+
 }

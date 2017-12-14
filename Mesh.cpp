@@ -164,7 +164,7 @@ bool Mesh::importObj(const char * path, bool textured, char * texPath)
 }
 
 //function for actually rendering/drawing the terrain mesh
-void Mesh::drawMesh(){
+void Mesh::drawMesh(float repeats){
 	if(TEX){
 		glBindTexture(GL_TEXTURE_2D, *tex);
 
@@ -179,7 +179,7 @@ void Mesh::drawMesh(){
     for( unsigned int i=0; i<out_vertices.size(); i++ ){
       glNormal3f(out_normals[i]->x,out_normals[i]->y,out_normals[i]->z);
 			if(TEX){
-				glTexCoord2f((out_uvs[i]->x*-1)+1,out_uvs[i]->y);
+				glTexCoord2f(((out_uvs[i]->x*-1)+1)*repeats,out_uvs[i]->y*repeats);
 			}
       glVertex3f(out_vertices[i]->x,out_vertices[i]->y,out_vertices[i]->z);
     }

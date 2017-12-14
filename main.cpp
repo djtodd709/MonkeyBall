@@ -21,6 +21,7 @@ Mesh *aiaiHead;
 Mesh *aiaiBody;
 Mesh *aiaiArm;
 Mesh *aiaiBall;
+Mesh *stage;
 
 #define X 0
 #define Y 1
@@ -38,6 +39,9 @@ char* aiaiArmObjPath = (char*)"Assets/Models/Arm.obj";
 char* aiaiArmUVPath = (char*)"Assets/Textures/ArmUV.ppm";
 char* aiaiBallObjPath = (char*)"Assets/Models/BallHalf.obj";
 
+char* stageUVPath = (char*)"Assets/Textures/Stage.ppm";
+char* stagePath0 = (char*)"Assets/Models/Stages/Stage0.obj";
+
 GameState* game;
 //Input values
 int mx, my;
@@ -49,6 +53,11 @@ float l0pos[4] = {1.0f,10.0f,1.0f,1};
 float l0dif[4] = {0.7f,0.7f,0.7f,1};
 float l0amb[4] = {0.1f,0.1f,0.1f,1};
 float l0spe[4] = {1,1,1,1};
+
+//Material properties - stage
+float s_dif[4] = {0.5f,1.0f,0.3f,1};
+float s_amb[4] = {0.3f,0.7f,0.1f,1};
+float s_spe[4] = {1.0f,1.0f,1.0f,1};
 
 //Material properties - white
 float m0_dif[4] = {1.0f,1.0f,1.0f,1};
@@ -130,6 +139,11 @@ void init(void){
 	aiaiArm->importObj(aiaiArmObjPath,true,aiaiArmUVPath);
 	aiaiBall = new Mesh();
 	aiaiBall->importObj(aiaiBallObjPath,false,"");
+
+
+	stage = new Mesh();
+	stage->importObj(stagePath0,true,stageUVPath);
+
 }
 
 /* display function - GLUT display callback function
@@ -148,6 +162,11 @@ void display(void){
 
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
 
+		//Apply material settings
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, s_dif);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, s_amb);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, s_spe);
+
 		if (debugMode){
 			m_temp[0] = 1; m_temp[1] = 0; m_temp[2] = 0;
 			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, m_temp);
@@ -159,13 +178,8 @@ void display(void){
 		}
 		glPushMatrix(); //Draw temp ground plane
 			glTranslatef(0,groundHeight,0); //Move the ground plane down from the origin a bit
-			glBegin(GL_QUADS);
-				glNormal3f(0,1,0);
-				glVertex3i(groundSize,0,groundSize);
-				glVertex3i(groundSize,0,-groundSize);
-				glVertex3i(-groundSize,0,-groundSize);
-				glVertex3i(-groundSize,0,groundSize);
-			glEnd();
+
+			stage->drawMesh(25);
 		glPopMatrix();
 
 
@@ -175,20 +189,20 @@ void display(void){
 			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m0_amb);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m0_spe);
 
-			aiaiHead->drawMesh();
+			aiaiHead->drawMesh(1);
 			glTranslatef(0,-1.7f,0);
-			aiaiBody->drawMesh();
+			aiaiBody->drawMesh(1);
 			glTranslatef(0,0.9f,0);
 			glPushMatrix();
 				glTranslatef(1.3f,0,0);
 				glRotatef(40,0,0,1);
-				aiaiArm->drawMesh();
+				aiaiArm->drawMesh(1);
 			glPopMatrix();
 			glPushMatrix();
 				glTranslatef(-1.3f,0,0);
 				glRotatef(180,0,1,0);
 				glRotatef(40,0,0,1);
-				aiaiArm->drawMesh();
+				aiaiArm->drawMesh(1);
 			glPopMatrix();
 		glPopMatrix();
 		glPushMatrix();
@@ -198,13 +212,13 @@ void display(void){
 			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m2_dif);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m2_amb);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m2_spe);
-			aiaiBall->drawMesh();
+			aiaiBall->drawMesh(1);
 			glRotatef(180, 1,0,0);
 			//Apply material settings
 			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m1_dif);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m1_amb);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m1_spe);
-			aiaiBall->drawMesh();
+			aiaiBall->drawMesh(1);
 		glPopMatrix();
 	glPopMatrix();
 	//swap buffers
