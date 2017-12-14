@@ -16,37 +16,41 @@
 Camera::Camera()
 {
 	camPos = new v3; //where the camera is
-	camPos->x = 10;
-	camPos->y = 2;
-	camPos->z = 10;
+	camPos->x = 0;
+	camPos->y = 5;
+	camPos->z = 40;
 	camTarget = new v3;
-	camTarget->x = 0;
-	camTarget->y = 2;
-	camTarget->z = 0;
+	camTarget->x = 0.0f;
+	camTarget->y = 0.0f;
+	camTarget->z = 0.0f;
 
 	camDist = -5;
 	camTwist = 0;
 	camElev = 0;
 	camAzimuth = 0;
-	camX = 0;
-	camZ = 0;
 }
 
 //Takes a pointer to a position vector, which becomes the followed camera target
 void Camera::setTargetObject(v3* targetPos)
 {
+	printf("Pos: %f,%f,%f\n", targetPos->x, targetPos->y, targetPos->z);
 	camTarget = targetPos;
 }
 
 void Camera::update()
 {
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	printf("Dist: %f; Twist: %f; Elev: %f; Azim: %f\n", camDist, camTwist, camElev, camAzimuth);
+	printf("Cam Pos: %f,%f,%f\n", camPos->x, camPos->y, camPos->z);
+	printf("Target Pos: %f,%f,%f\n", camTarget->x, camTarget->y, camTarget->z);
 	gluLookAt(camPos->x, camPos->y, camPos->z, camTarget->x, camTarget->y, camTarget->z, 0, 1, 0);
-	orbitView();
+	//orbitView();
 }
 
 void Camera::orbitView(void)
 {
-	//printf("Dist: %f; Twist: %f; Elev: %f; Azim: %f\n", dist, twist, elev, azimuth);
+	glLoadIdentity();
 	if (this->camDist > 1) {
 		camDist = 1;
 	}

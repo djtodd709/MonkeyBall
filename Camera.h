@@ -19,8 +19,6 @@ public:
 	float camTwist;
 	float camElev;
 	float camAzimuth;
-	float camX;
-	float camZ;
 //private:
 };
 #endif

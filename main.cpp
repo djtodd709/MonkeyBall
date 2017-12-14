@@ -167,6 +167,8 @@ void display(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	orbitCam->update();
+	//gluLookAt(orbitCam->camPos->x, orbitCam->camPos->y, orbitCam->camPos->z, 0.0f, 0.0f, 0.0f, 0, 1, 0);
 	glPushMatrix();	//Push base matrix that everything else will be pushed onto
 		//Apply material settings
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, s_dif);
@@ -187,7 +189,6 @@ void display(void){
 
 			stage->drawMesh(25);
 		glPopMatrix();
-
 		for (int i = 0; i < game->gameObjects.size(); i++)
 		{
 			game->gameObjects[i]->drawMesh(1);
@@ -203,16 +204,33 @@ void display(void){
 void keyboard(unsigned char key, int xIn, int yIn){
 	int mod = glutGetModifiers();
 	switch (key){
-		case 'q':	//quit
 		case 27:	//27 is the esc key
 			exit(0);
 			break;
                 //Camera zoom
-                case '.':
+		case '.':
 			orbitCam->camDist += 1;
 			break;
-                case ',':
+		case ',':
 			orbitCam->camDist -= 1;
+			break;
+		case 'w':
+			orbitCam->camPos->x -= 1;
+			break;
+		case 'a':
+			orbitCam->camPos->z -= 1;
+			break;
+		case 's':
+			orbitCam->camPos->x += 1;
+			break;
+		case 'd':
+			orbitCam->camPos->z += 1;
+			break;
+		case 'q':
+			orbitCam->camPos->y -= 1;
+			break;
+		case 'e':
+			orbitCam->camPos->y += 1;
 			break;
 	}
 }
@@ -221,20 +239,20 @@ void special(int key, int xIn, int yIn)
 {
 	switch (key) {
 		case GLUT_KEY_DOWN:
-			playerObj->rootPos->x += 1;
-			//orbitCam->camElev += 1;
+			//playerObj->rootPos->x += 0.25;
+			orbitCam->camElev += 1;
 			break;
 		case GLUT_KEY_UP:
-			playerObj->rootPos->x -= 1;
-			//orbitCam->camElev -= 1;
+			//playerObj->rootPos->x -= 0.25;
+			orbitCam->camElev -= 1;
 			break;
 		case GLUT_KEY_LEFT:
-			playerObj->rootPos->y += 1;
-			//orbitCam->camAzimuth += 1;
+			//playerObj->rootPos->y += 0.25;
+			orbitCam->camAzimuth += 1;
 			break;
 		case GLUT_KEY_RIGHT:
-			playerObj->rootPos->y -= 1;
-			//orbitCam->camAzimuth -= 1;
+			//playerObj->rootPos->y -= 0.25;
+			orbitCam->camAzimuth -= 1;
 			break;
 	}
 }

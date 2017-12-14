@@ -14,9 +14,9 @@
 Player::Player(const char * pathToAssetFolder) : Entity(pathToAssetFolder)
 {
 	rootPos = new v3;
-	rootPos->x = 0;
-	rootPos->y = 0;
-	rootPos->z = 0;
+	rootPos->x = 0.0f;
+	rootPos->y = 0.0f;
+	rootPos->z = 0.0f;
 }
 
 void Player::onTick()
