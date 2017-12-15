@@ -208,10 +208,10 @@ void keyboard(unsigned char key, int xIn, int yIn){
 			break;
                 //Camera zoom
 		case '.':
-			orbitCam->camDist += 1;
+			orbitCam->camDist -= 1;
 			break;
 		case ',':
-			orbitCam->camDist -= 1;
+			orbitCam->camDist += 1;
 			break;
 		case 'w':
 			orbitCam->camPos->x -= 1;
@@ -239,19 +239,19 @@ void special(int key, int xIn, int yIn)
 	switch (key) {
 		case GLUT_KEY_DOWN:
 			//playerObj->rootPos->x += 0.25;
-			orbitCam->camElev += 1;
+			orbitCam->camElev -= 1;
 			break;
 		case GLUT_KEY_UP:
 			//playerObj->rootPos->x -= 0.25;
-			orbitCam->camElev -= 1;
+			orbitCam->camElev += 1;
 			break;
 		case GLUT_KEY_LEFT:
 			//playerObj->rootPos->y += 0.25;
-			orbitCam->camAzimuth += 1;
+			orbitCam->camAzimuth -= 1;
 			break;
 		case GLUT_KEY_RIGHT:
 			//playerObj->rootPos->y -= 0.25;
-			orbitCam->camAzimuth -= 1;
+			orbitCam->camAzimuth += 1;
 			break;
 	}
 }

@@ -16,6 +16,7 @@
 Camera::Camera()
 {
 	camPos = new v3; //where the camera is
+	//Cam pos is currently calculated from camDist etc through matrix transforms, can't set directly
 	camPos->x = 0;
 	camPos->y = 5;
 	camPos->z = 40;
@@ -24,10 +25,10 @@ Camera::Camera()
 	camTarget->y = 0.0f;
 	camTarget->z = 0.0f;
 
-	camDist = -5;
-	camTwist = 0;
-	camElev = 0;
-	camAzimuth = 0;
+	camDist = 40; //Distance from target
+	camTwist = 0; //Sideways angle, not used
+	camElev = 40; //Angle above x-z plane (horizontal)
+	camAzimuth = 40; //Angle away from y-z plane (vertical, clockwise)
 }
 
 //Takes a pointer to a position vector, which becomes the followed camera target
@@ -46,14 +47,14 @@ void Camera::update()
 	printf("Cam Pos: %f,%f,%f\n", camPos->x, camPos->y, camPos->z);
 	printf("Target Pos: %f,%f,%f\n", camTarget->x, camTarget->y, camTarget->z);
 	*/
-	gluLookAt(camPos->x, camPos->y, camPos->z, camTarget->x, camTarget->y, camTarget->z, 0, 1, 0);
-	//orbitView();
+        gluLookAt(0, 0, 0, 0, 0, -1, 0, 1, 0);
+	orbitView();
 }
 
 void Camera::orbitView(void)
 {
 	glLoadIdentity();
-	if (this->camDist > 1) {
+	if (this->camDist < 1) {
 		camDist = 1;
 	}
 	if (camElev < -85) {
@@ -62,11 +63,11 @@ void Camera::orbitView(void)
 		camElev = 85;
 	}
 
-	glTranslatef(0.0, 0.0, camDist);
-	glRotatef(-camElev, 1.0, 0.0, 0.0);
-	glRotatef(camAzimuth, 0.0, 1.0, 0.0);
-	glRotatef(-camTwist, 0.0, 0.0, 1.0);
-	glTranslatef(-camPos->x, 0, 0);
-	glTranslatef(0, -camPos->y, 0);
-	glTranslatef(0, 0, -camPos->z);
+	glTranslatef(0.0, 0.0, -camDist);
+	glRotatef(camElev, 1.0, 0.0, 0.0);
+	glRotatef(-camAzimuth, 0.0, 1.0, 0.0);
+	glRotatef(camTwist, 0.0, 0.0, 1.0);
+	glTranslatef(-camTarget->x, 0, 0);
+	glTranslatef(0, -camTarget->y, 0);
+	glTranslatef(0, 0, -camTarget->z);
 }
