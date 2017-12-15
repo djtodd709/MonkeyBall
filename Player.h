@@ -12,6 +12,7 @@ public:
 	Mesh* head;
 	Mesh* body;
 	Mesh* arm;
+	Mesh* leg;
 	Mesh* ball;
 	virtual void onCollision(Entity* o, v3 normal) override;
 	virtual void reset() override;
@@ -20,6 +21,7 @@ public:
 	GameState* gameStateRef;
 private:
 	float ballAngle = 0.0f;
+	float animAngle = 0.0f;
 	float terminalVelocity = 1.0f;
 	float gravity = 0.02f;
 	bool isAirborne();

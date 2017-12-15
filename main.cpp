@@ -21,6 +21,7 @@
 Mesh *aiaiHead;
 Mesh *aiaiBody;
 Mesh *aiaiArm;
+Mesh *aiaiLeg;
 Mesh *aiaiBall;
 Mesh *stage;
 
@@ -38,6 +39,8 @@ char* aiaiBodyObjPath = (char*)"Assets/Models/Body.obj";
 char* aiaiBodyUVPath = (char*)"Assets/Textures/BodyUV.ppm";
 char* aiaiArmObjPath = (char*)"Assets/Models/Arm.obj";
 char* aiaiArmUVPath = (char*)"Assets/Textures/ArmUV.ppm";
+char* aiaiLegObjPath = (char*)"Assets/Models/Leg.obj";
+char* aiaiLegUVPath = (char*)"Assets/Textures/LegUV.ppm";
 char* aiaiBallObjPath = (char*)"Assets/Models/BallHalf.obj";
 char* aiaiBallUVPath = (char*)""; //Ball has no UV right now
 
@@ -146,11 +149,14 @@ void init(void){
 	aiaiBody->importObj(aiaiBodyObjPath,true,aiaiBodyUVPath);
 	aiaiArm = new Mesh();
 	aiaiArm->importObj(aiaiArmObjPath,true,aiaiArmUVPath);
+	aiaiLeg = new Mesh();
+	aiaiLeg->importObj(aiaiLegObjPath,true,aiaiLegUVPath);
 	aiaiBall = new Mesh();
 	aiaiBall->importObj(aiaiBallObjPath, false, aiaiBallUVPath);
 	playerObj->head = aiaiHead;
 	playerObj->body = aiaiBody;
 	playerObj->arm = aiaiArm;
+	playerObj->leg = aiaiLeg;
 	playerObj->ball = aiaiBall;
 	playerObj->gameStateRef = game;
 	orbitCam->setTargetObject(playerObj->currentPosition);
@@ -186,7 +192,7 @@ void display(void){
 		}
 		glPushMatrix(); //Draw temp ground plane
 			glTranslatef(0,groundHeight,0); //Move the ground plane down from the origin a bit
-			stage->drawMesh(25);
+			//stage->drawMesh(25);
 		glPopMatrix();
 		for (int i = 0; i < game->gameObjects.size(); i++)
 		{

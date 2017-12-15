@@ -61,7 +61,8 @@ void Player::onTick()
 	}
 	*currentPosition = *currentPosition + *velocity;
 	float cy = currentPosition->y;
-	ballAngle += 5.0f;
+	ballAngle += 0.01f;
+	animAngle += 0.001f;
 	if (cy < -200.0f)
 	{
 		printf("FALL OUT!\n");
@@ -93,20 +94,39 @@ void Player::drawMesh(float repeats)
 			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m0_amb);
 			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m0_spe);
 
-			head->drawMesh(1);
+			glTranslatef(0, -1.0f, 0);
+			glPushMatrix();
+				glRotatef(2.0f*cos(animAngle), 0, 1, 0);
+				head->drawMesh(1);
+			glPopMatrix();
 			glTranslatef(0, -1.7f, 0);
 			body->drawMesh(1);
 			glTranslatef(0, 0.9f, 0);
 			glPushMatrix();
 				glTranslatef(1.3f, 0, 0);
 				glRotatef(40, 0, 0, 1);
+				glRotatef(-20.0f*sin(animAngle), 1, 0, 0);
 				arm->drawMesh(1);
 			glPopMatrix();
 			glPushMatrix();
 				glTranslatef(-1.3f, 0, 0);
 				glRotatef(180, 0, 1, 0);
 				glRotatef(40, 0, 0, 1);
+				glRotatef(-20.0f*sin(animAngle), 1, 0, 0);
 				arm->drawMesh(1);
+			glPopMatrix();
+
+			glTranslatef(0, -2.2f, 0);
+			glScalef(1.5f,1.5f,1.5f);
+			glPushMatrix();
+				glTranslatef(0.5f, 0, 0);
+				glRotatef(40.0f*sin(animAngle), 1, 0, 0);
+				leg->drawMesh(1);
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(-0.5f, 0, 0);
+				glRotatef(-40.0f*sin(animAngle), 1, 0, 0);
+				leg->drawMesh(1);
 			glPopMatrix();
 		glPopMatrix();
 		glPushMatrix();
