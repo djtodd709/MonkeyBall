@@ -136,7 +136,6 @@ void init(void){
 	mButtonsPressed = new bool[3];
 	keysPressed = new bool[15];
 	game = new GameState();
-	printf("hamn'");
 	playerObj = new Player(aiaiBallObjPath);
 	game->gameObjects.push_back(playerObj);
 	game->cam = orbitCam;
@@ -153,7 +152,8 @@ void init(void){
 	playerObj->body = aiaiBody;
 	playerObj->arm = aiaiArm;
 	playerObj->ball = aiaiBall;
-	orbitCam->setTargetObject(playerObj->rootPos);
+	playerObj->gameStateRef = game;
+	orbitCam->setTargetObject(playerObj->currentPosition);
 
 	stage = new Mesh();
 	stage->importObj(stagePath0,true,stageUVPath);
@@ -310,7 +310,8 @@ void gameUpdate(float dt)
 //FPS controller
 void FPSTimer(int value){
 	glutTimerFunc(value, FPSTimer, 0);
-	gameUpdate((float)value);
+	float dt = (float)value;
+	gameUpdate(dt);
 	glutPostRedisplay();
 }
 

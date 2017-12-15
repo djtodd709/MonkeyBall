@@ -61,13 +61,3 @@ v3 Entity::checkCollision(v3 incoming)
 {
 	return collisionGeometry->checkCollision(incoming);
 }
-
-void Entity::onTick()
-{
-
-}
-
-void Entity::onCollision()
-{
-
-}

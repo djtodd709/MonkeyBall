@@ -11,8 +11,11 @@ public:
 
 	virtual void drawMesh(float repeats);
 	v3 checkCollision(v3 incoming);
-	virtual void onTick();
-	virtual void onCollision();
+	virtual void reset() = 0;
+	virtual void onTick() = 0;
+	virtual void onCollision(Collider* o) = 0;
+	v3* currentPosition;
+	v3* startingPosition;
 protected:
 
 	bool importModel(char* path, bool textured);

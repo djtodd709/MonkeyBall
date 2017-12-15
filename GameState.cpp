@@ -56,3 +56,21 @@ void GameState::setState(CurrentState newState)
 {
 
 }
+
+void GameState::resetStage()
+{
+	//TODO: Switch to this once we have stage loading properly implemented
+	/*
+	Stage* currentStage = &stages[currentStageIndex];
+	for (int i = 0; i < currentStage->stageObjects.size(); i++)
+	{
+		currentStage->stageObjects[i]->reset();
+	}
+	*/
+
+	//HACK: resets ALL objects
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		gameObjects[i]->reset();
+	}
+}

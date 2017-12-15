@@ -13,33 +13,61 @@
 
 Player::Player(const char * pathToAssetFolder) : Entity(pathToAssetFolder)
 {
-	rootPos = new v3;
-	rootPos->x = 0.0f;
-	rootPos->y = 0.0f;
-	rootPos->z = 0.0f;
+	currentPosition = new v3;
+	currentPosition->x = 0.0f;
+	currentPosition->y = 0.0f;
+	currentPosition->z = 0.0f;
 	velocity = new v3;
+	velocity->x = 0.0f;
+	velocity->y = 0.0f;
+	velocity->z = 0.0f;
+	startingPosition = new v3;
+	startingPosition->x = 0.0f;
+	startingPosition->y = 0.0f;
+	startingPosition->z = 0.0f;
+}
+
+void Player::goToStage(Stage* s)
+{
+	startingPosition = s->playerStart;
 	velocity->x = 0.0f;
 	velocity->y = 0.0f;
 	velocity->z = 0.0f;
 }
 
+void Player::onCollision(Collider* o)
+{
+
+}
+
 void Player::onTick()
 {
-	ballAngle += 5.0f;
 	if (isAirborne())
 	{
 		if (velocity->y < terminalVelocity && velocity->y > -terminalVelocity)
 		{
-			velocity->y -= 0.05f;
+			velocity->y -= gravity;
 		}
 		else
 		{
-			velocity->y = terminalVelocity;
-			printf("Way past fast");
+			if (velocity->y > 0)
+			{
+				velocity->y = terminalVelocity;
+			}
+			else
+			{
+				velocity->y = -terminalVelocity;
+			}
 		}
 	}
-	*rootPos = *rootPos + *velocity;
-	printf("Player pos: %f,%f,%f\n", rootPos->x, rootPos->y, rootPos->z);
+	*currentPosition = *currentPosition + *velocity;
+	float cy = currentPosition->y;
+	ballAngle += 5.0f;
+	if (cy < -200.0f)
+	{
+		printf("FALL OUT!\n");
+		gameStateRef->resetStage();
+	}
 }
 
 bool Player::isAirborne()
@@ -48,10 +76,18 @@ bool Player::isAirborne()
 	return true;
 }
 
+void Player::reset()
+{
+	velocity->x = 0.0f;
+	velocity->y = 0.0f;
+	velocity->z = 0.0f;
+	*currentPosition = *startingPosition;
+}
+
 void Player::drawMesh(float repeats)
 {
 	glPushMatrix();
-		glTranslatef(rootPos->x, rootPos->y, rootPos->z);
+		glTranslatef(currentPosition->x, currentPosition->y, currentPosition->z);
 		glPushMatrix();
 			//Apply material settings
 			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m0_dif);

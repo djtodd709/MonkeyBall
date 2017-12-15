@@ -2,21 +2,26 @@
 #define __PLAYER_H__
 
 #include "Entity.h"
+#include "GameState.h"
 
 //Base class for all game objects - each should include a model and  collision geometry.
 class Player : public Entity{
 public:
 	Player(const char * pathToAssetFolder);
-	v3* rootPos;
+	void goToStage(Stage* s);
 	Mesh* head;
 	Mesh* body;
 	Mesh* arm;
 	Mesh* ball;
+	virtual void onCollision(Collider* o) override;
+	virtual void reset() override;
 	virtual void onTick() override;
 	virtual void drawMesh(float repeats) override;
+	GameState* gameStateRef;
 private:
 	float ballAngle = 0.0f;
 	float terminalVelocity = 1.0f;
+	float gravity = 0.02f;
 	bool isAirborne();
 	v3* velocity;
 
