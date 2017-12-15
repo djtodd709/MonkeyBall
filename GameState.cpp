@@ -49,6 +49,7 @@ void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 	}
 	else if (state == IN_GAME)
 	{
+		/*TODO: uncomment once stages are implemented (if they will be at all)
 		stages[currentStageIndex]->timeLeft -= 1;
 
 		if (stages[currentStageIndex]->timeLeft <= 0)
@@ -56,7 +57,7 @@ void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 			printf("TIME UP");
 			resetStage();
 		}
-
+		*/
 		//Display and get input w/ gameObjects, display UI.
 		for (int i = 0; i < gameObjects.size(); i++)
 		{
