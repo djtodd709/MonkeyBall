@@ -11,5 +11,7 @@ public:
 	Stage();
 	vector <Entity*> stageObjects;
 	v3* playerStart;
+	int maxTime;
+	int timeLeft;
 };
 #endif

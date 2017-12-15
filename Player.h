@@ -13,7 +13,7 @@ public:
 	Mesh* body;
 	Mesh* arm;
 	Mesh* ball;
-	virtual void onCollision(Collider* o) override;
+	virtual void onCollision(Entity* o, v3 normal) override;
 	virtual void reset() override;
 	virtual void onTick() override;
 	virtual void drawMesh(float repeats) override;

@@ -35,9 +35,8 @@ void Player::goToStage(Stage* s)
 	velocity->z = 0.0f;
 }
 
-void Player::onCollision(Collider* o)
+void Player::onCollision(Entity* o, v3 normal)
 {
-
 }
 
 void Player::onTick()
