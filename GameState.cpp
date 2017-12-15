@@ -17,6 +17,28 @@ GameState::GameState()
 	state = IN_GAME;
 }
 
+Stage* buildStage1()
+{
+	Stage* ret = new Stage();
+	//Set the player start coordinates
+	ret->playerStart->x = 0.0f;
+	ret->playerStart->y = 0.0f;
+	ret->playerStart->z = 0.0f;
+	//Fill the stage w/ entities (bananas, the goal, etc.)
+	/*
+	goal args: (int stage index, v3 pos)
+	v3 goalPos = new v3; etc etc
+	ret.stageObjects.push_back(new Goal(2, goalPos));
+	ret.stageObjects.push_back(new Banana(bananaPos1));
+	ret.stageObjects.push_back(new Banana(bananaPos2));
+	ret.stageObjects.push_back(new Banana(bananaPos3));
+	ret.stageObjects.push_back(new Banana(bananaPos4));
+	ret.stageObjects.push_back(new Banana(bananaPos5));
+	ret.stageObjects.push_back(new Banana(bananaPos6));
+	
+	*/
+}
+
 void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 {
 	//TODO: Implement game loop for each state
@@ -27,6 +49,14 @@ void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 	}
 	else if (state == IN_GAME)
 	{
+		stages[currentStageIndex]->timeLeft -= 1;
+
+		if (stages[currentStageIndex]->timeLeft <= 0)
+		{
+			printf("TIME UP");
+			resetStage();
+		}
+
 		//Display and get input w/ gameObjects, display UI.
 		for (int i = 0; i < gameObjects.size(); i++)
 		{
@@ -49,8 +79,12 @@ void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 	else if (state == GAME_PAUSED)
 	{
 		//Display gameObjects, display and get input w/ UI.
-		//gameObjects;
-		//uiElements;
+
+		/*
+		for (int i = 0; i < uiElements.size(); i++)
+		{
+		uiElements[i]->onTick();
+		}*/
 	}
 	cam->update();
 
@@ -73,15 +107,16 @@ void GameState::setState(CurrentState newState)
 
 void GameState::resetStage()
 {
-	//TODO: Switch to this once we have stage loading properly implemented
+	//Switch to this once we have stage loading properly implemented
 	/*
 	Stage* currentStage = &stages[currentStageIndex];
 	for (int i = 0; i < currentStage->stageObjects.size(); i++)
 	{
 		currentStage->stageObjects[i]->reset();
 	}
+	*currentStage->timeLeft = *currentStage->maxTime;
 	*/
-
+	
 	//HACK: resets ALL objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
