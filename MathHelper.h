@@ -73,5 +73,6 @@ struct v3
 
 float magnitude(v3 vector);
 v3 reflectVector (v3 incoming, v3 surfaceNormal);
+float dotProduct (v3 vector1, v3 vector2);
 
 #endif

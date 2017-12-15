@@ -27,3 +27,8 @@ v3 reflectVector (v3 incoming, v3 surfaceNormal)
 	ret = ret * magnitude(incoming);
 	return ret;
 }
+
+float dotProduct (v3 vector1, v3 vector2){
+	float ret = vector1.x*vector2.x + vector1.y*vector2.y + vector1.z*vector2.z;
+	return ret;
+}

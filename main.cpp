@@ -11,6 +11,7 @@
 #  include <GL/gl.h>
 #  include <GL/glu.h>
 #  include <GL/freeglut.h>
+#include <cstring>
 #endif
 
 #include "GameState.h"
@@ -166,6 +167,44 @@ void init(void){
 
 }
 
+void displayHUD(void){
+	
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
+	
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	
+		glLoadIdentity();
+		gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glPixelZoom(-1, 1);
+		
+		//Display timer
+		char timeElapsed[10];
+		float i = (float)glutGet(GLUT_ELAPSED_TIME)/1000;
+		sprintf(timeElapsed, "Time: %.3f", i);
+		glRasterPos2i(glutGet(GLUT_WINDOW_WIDTH)/2 - (9*strlen(timeElapsed))/2, glutGet(GLUT_WINDOW_HEIGHT) - 30);
+		glutBitmapString(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char*>(timeElapsed));
+		
+		//Display bananas
+		char bananasText[10];
+		int bananaCount = 0;
+		sprintf(bananasText, "Bananas: %d", bananaCount);
+		glRasterPos2i(glutGet(GLUT_WINDOW_WIDTH)/2 - (9*strlen(bananasText))/2, 30);		
+		glutBitmapString(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char*>(bananasText));
+		
+		glFlush();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
+}
+
 /* display function - GLUT display callback function
  *		clears the screen, sets the camera position
  */
@@ -186,7 +225,7 @@ void display(void){
 			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, m_temp);
 			glPointSize(3);
 			glBegin(GL_POINTS);
-				glVertex3f(orbitCam->camPos->x,orbitCam->camPos->y,orbitCam->camPos->z); //Crosshair
+				glVertex3f(orbitCam->camTarget->x,orbitCam->camTarget->y,orbitCam->camTarget->z); //Crosshair
 			glEnd();
 			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, no_mat);
 		}
@@ -200,6 +239,10 @@ void display(void){
 		}
 
 	glPopMatrix();
+	
+	//2D stuff
+	displayHUD();
+	
 	//swap buffers
 	glutSwapBuffers();
 }

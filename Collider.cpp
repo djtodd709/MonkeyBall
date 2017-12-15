@@ -12,7 +12,7 @@
 
 Collider::Collider()
 {
-
+	
 }
 
 bool Collider::importCollision(char* path)
@@ -22,5 +22,5 @@ bool Collider::importCollision(char* path)
 
 v3 Collider::checkCollision(v3 incoming)
 {
-	//TODO: Implement
+	
 }
