@@ -31,7 +31,15 @@ void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 		for (int i = 0; i < gameObjects.size(); i++)
 		{
 			gameObjects[i]->onTick();
+			for (int o = 0; o < gameObjects.size(); o++) //Iterate over every object in the scene to check if they collide
+			{
+				if (i != o) //Cancel if we would be checking a self-collision
+				{
+					checkCollision(gameObjects[i], gameObjects[o]);
+				}
+			}
 		}
+
 		/*
 		for (int i = 0; i < uiElements.size(); i++)
 		{
@@ -50,6 +58,12 @@ void GameState::tick(float dt, int mx, int my, bool* mButtons, bool* keyButtons)
 	prevY = my;
 	prevMButtons = mButtons;
 	keysPressed = keyButtons;
+}
+
+void GameState::checkCollision(Entity* a, Entity* b)
+{
+	//TODO: IMPLEMENT COLLISION CHECKING
+	//In case of collisions, on each entity call onCollision(Entity* o, v3 normal) with the other entity and collision surface normal
 }
 
 void GameState::setState(CurrentState newState)

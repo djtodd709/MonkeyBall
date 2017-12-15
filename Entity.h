@@ -13,7 +13,7 @@ public:
 	v3 checkCollision(v3 incoming);
 	virtual void reset() = 0;
 	virtual void onTick() = 0;
-	virtual void onCollision(Collider* o) = 0;
+	virtual void onCollision(Entity* o, v3 normal) = 0; //Entity collided with, as well as the normal of the collision surface
 	v3* currentPosition;
 	v3* startingPosition;
 protected:
